@@ -2,15 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const { db } = require('./db/db');
 const {readdirSync} = require('fs');
+
+// Create app variable
 const app = express();
 
 
 require('dotenv').config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3001; // Entry to app
 
 // middlewares
-app.use(express.json());
+app.use(express.json()); // Apply to all endpoints to allow json into the body of each request
 app.use(cors());
 
 // routes
