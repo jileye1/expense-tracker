@@ -14,6 +14,21 @@ exports.addExpense = async (req, res) => {
 
     try {
         // Validations
+        if(!title) {
+            return res.status(400).json({message: 'Title required.'});
+        }
+        if(!category) {
+            return res.status(400).json({message: 'Category required.'});
+        }
+        if(!amount) {
+            return res.status(400).json({message: 'Amount required.'});
+        }
+        if(!description) {
+            return res.status(400).json({message: 'Description required.'});
+        }
+        if(!date) {
+            return res.status(400).json({message: 'Date required.'});
+        }
         if(!title || !category || !amount || !description || !date) {
             return res.status(400).json({message: 'All fields required.'});
         }
