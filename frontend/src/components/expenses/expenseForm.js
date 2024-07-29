@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { postExpense } from "./../../api/expenses"
-import { ExpenseFormStyled } from "./expenseStyles"
+import { postExpense } from "./../../api/expenses";
+import { ExpenseFormStyled } from "./expenseStyles";
 import StyledButton from "../button/styledButton";
-import { plus } from "./../../utils/icons"
+import { plus } from "./../../utils/icons";
 
 
-function ExpenseForm() {
+function ExpenseForm({updateList, setUpdateList}) {
 
     const [newExpense, setNewExpense] = useState({
         title: '',
@@ -28,6 +28,7 @@ function ExpenseForm() {
         e.preventDefault(); // prevent refresh
         postExpense(newExpense).then((response) => {
             console.log(response);
+            setUpdateList(!updateList);
         });
     }
 
