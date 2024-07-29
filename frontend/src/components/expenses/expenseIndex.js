@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import { InnerLayout } from "../../styles/Layouts";
 import ExpenseForm from "./expenseForm";
+import { ExpensesStyled } from "./expenseStyles"
 
 function Expenses() {
 
@@ -23,7 +23,5 @@ function Expenses() {
         </ExpensesStyled>
     )
 }
-
-const ExpensesStyled = styled.div``;
 
 export default Expenses;

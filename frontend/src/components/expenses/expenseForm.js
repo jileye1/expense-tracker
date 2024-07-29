@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { postExpense } from "./../../api/expenses"
+import { ExpenseFormStyled } from "./expenseStyles"
+import StyledButton from "../button/styledButton";
+import { plus } from "./../../utils/icons"
 
 
 function ExpenseForm() {
@@ -82,13 +84,18 @@ function ExpenseForm() {
                 />
             </div>
             <div className="submit-btn">
-                <button>Add Expense</button>
+                <StyledButton
+                    name={'Add Expense'}
+                    icon={plus}
+                    bPadding={'.8rem 1.6rem'}
+                    bRadius={'30px'}
+                    bg={'var(--color-accent'}
+                    color={'#fff'}
+                />
             </div>
         </ExpenseFormStyled>
     )
 }
 
-const ExpenseFormStyled = styled.form`
-`;
 
 export default ExpenseForm;

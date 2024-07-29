@@ -5,3 +5,4 @@ export const categories = <i className="fa-solid fa-tags"></i>
 export const budget = <i className="fa-solid fa-dollar-sign"></i>
 export const signout = <i className="fa-solid fa-right-from-bracket"></i>
 export const user = <i className="fa-solid fa-user"></i>
+export const plus = <i className="fa-solid fa-plus"></i>
