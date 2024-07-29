@@ -10,7 +10,7 @@ export const getExpensesForUser = async () => {
 
 export const postExpense = async (expense) => {
     return axiosInstance
-            .post("/add-expense")
+            .post("/add-expense", expense)
             .then((res) => res)
             .catch((err) => err.response.data.message);
 };
