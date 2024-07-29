@@ -1,25 +1,38 @@
 import React from 'react'
-import styled from 'styled-components'
+import { menuItems} from '../../utils/menuItems'
+import { signout } from '../../utils/icons'
+import { NavStyled } from './navStyle'
+import avatar from '../../img/avatar.png'
 
-function Navigation() {
+function Navigation({activeWindow, setActiveWindow}) {
     return (
         <NavStyled>
             <div className='user-container'>
-                <div>User Image</div>
+                <img src={avatar} alt=""/>
                 <div>
                     <h2>Name</h2>
                     <p>Your Money</p>
                 </div>
             </div>
             <ul className='menu-items'>
-                
+                {menuItems.map((item) => {
+                    return <li 
+                        key={item.id}
+                        onClick={() => setActiveWindow(item.id)}
+                        className={activeWindow === item.id ? 'active' : ''}
+                        >
+                        {item.icon}
+                        <span>{item.title}</span>
+                    </li>
+                })}
             </ul>
+            <div className='bottom-nav'>
+                <li>
+                    {signout} Sign Out
+                </li>
+            </div>
         </NavStyled>
     )
 }
-
-const NavStyled = styled.nav`
-
-`;
 
 export default Navigation;
