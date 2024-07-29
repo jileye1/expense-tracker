@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { postExpense } from "./../../api/expenses"
 
 
 function ExpenseForm() {
@@ -20,8 +21,16 @@ function ExpenseForm() {
         setNewExpense({...newExpense, [name]: e.target.value});
     }
 
+    const handleSubmit = e => {
+        console.log(newExpense)
+        e.preventDefault(); // prevent refresh
+        postExpense(newExpense).then((response) => {
+            console.log(response);
+        });
+    }
+
     return (
-        <ExpenseFormStyled>
+        <ExpenseFormStyled onSubmit={handleSubmit}>
             <div className="input-control">
                 <input 
                     type='text'
@@ -50,11 +59,36 @@ function ExpenseForm() {
                         setNewExpense({...newExpense, date: date})
                     }} />
             </div>
+            <div className="selects input-control">
+                <select 
+                    required value={category} 
+                    name="category" 
+                    id="category"
+                    onChange={handleInput('category')} >
+                        <option value="" disabled>Select Option</option>
+                        <option value="groceries">Groceries</option>
+                        <option value="other">Other</option>
+                </select>
+            </div>
+            <div className="input-control">
+                <textarea 
+                    name="description"
+                    value={description}
+                    placeholder="Add a description"
+                    id="description"
+                    cols="30"
+                    rows="4"
+                    onChange={handleInput('description')}
+                />
+            </div>
+            <div className="submit-btn">
+                <button>Add Expense</button>
+            </div>
         </ExpenseFormStyled>
     )
 }
 
-const ExpenseFormStyled = styled.div`
+const ExpenseFormStyled = styled.form`
 `;
 
 export default ExpenseForm;

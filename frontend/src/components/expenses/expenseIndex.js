@@ -13,7 +13,7 @@ function Expenses() {
                 <h1>Expenses</h1>
                 <div className="expense-content">
                     <div className="form-container">
-                        <ExpenseForm></ExpenseForm>
+                        <ExpenseForm />
                     </div>
                     <div className="expenses">
                         
