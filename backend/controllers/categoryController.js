@@ -20,7 +20,7 @@ exports.addCategory = async (req, res) => {
             return res.status(400).json({message: 'Budget amount must be a positive number.'});
         }
         await category.save();
-        res.status(200).json({message: 'Category saved to database.'});
+        res.status(200).json(category);
     } catch (error) {
         res.status(500).json({message: error});
     }
@@ -40,8 +40,8 @@ exports.getCategories = async (req, res) => {
 exports.deleteCategory = async (req, res) => {
     const {id} = req.params;
     CategorySchema.findByIdAndDelete(id).then((category) => {
-        res.status(200).json({message: "Deleted category."});
-    }).catch((err) => {
-        res.status(500).json({message: err});
+        res.status(200).json(category);
+    }).catch((error) => {
+        res.status(500).json({message: error});
     });
 }

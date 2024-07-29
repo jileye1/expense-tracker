@@ -36,7 +36,7 @@ exports.addExpense = async (req, res) => {
             return res.status(400).json({message: 'Amount must be a positive number.'});
         }
         await expense.save();
-        res.status(200).json({message: 'Expense saved to database.'});
+        res.status(200).json(expense);
     } catch (error) {
         res.status(500).json({message: error});
     }
@@ -56,8 +56,8 @@ exports.getExpenses = async (req, res) => {
 exports.deleteExpense = async (req, res) => {
     const {id} = req.params;
     ExpenseSchema.findByIdAndDelete(id).then((expense) => {
-        res.status(200).json({message: "Deleted expense."});
-    }).catch((err) => {
-        res.status(500).json({message: err});
+        res.status(200).json(expense);
+    }).catch((error) => {
+        res.status(500).json({message: error});
     });
 }

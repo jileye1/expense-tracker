@@ -21,7 +21,7 @@ exports.addIncome = async (req, res) => {
             return res.status(400).json({message: 'Amount must be a positive number.'});
         }
         await income.save();
-        res.status(200).json({message: 'Income saved to database.'});
+        res.status(200).json(income);
     } catch (error) {
         res.status(500).json({message: error});
     }
@@ -41,8 +41,8 @@ exports.getIncomes = async (req, res) => {
 exports.deleteIncome = async (req, res) => {
     const {id} = req.params;
     IncomeSchema.findByIdAndDelete(id).then((income) => {
-        res.status(200).json({message: "Deleted income."});
-    }).catch((err) => {
-        res.status(500).json({message: err});
+        res.status(200).json(income);
+    }).catch((error) => {
+        res.status(500).json({message: error});
     });
 }
