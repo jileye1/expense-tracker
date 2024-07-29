@@ -22,6 +22,9 @@ export const updateExpense = async () => {
 
 };
 
-export const deleteExpense = async () => {
-
+export const deleteExpense = async (id) => {
+    return axiosInstance
+        .delete("/delete-expense/" + id)
+        .then((res) => res)
+        .catch((err) => err.response.data.message);
 };

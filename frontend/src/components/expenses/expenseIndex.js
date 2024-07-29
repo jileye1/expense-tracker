@@ -35,7 +35,9 @@ function Expenses() {
                                 description={description}
                                 amount={amount}
                                 date={date}
-                                category={category}    
+                                category={category}  
+                                updateList={updateList}
+                                setUpdateList={setUpdateList} 
                             />
                         })}
                     </div>

@@ -1,7 +1,8 @@
 import React from "react";
 import { dollar, calendar, comment, trash } from "./../../utils/icons";
 import StyledButton from "../button/styledButton";
-import { ExpenseListItemStyled } from "./expenseStyles"
+import { ExpenseListItemStyled } from "./expenseStyles";
+import { deleteExpense } from "./../../api/expenses";
 
 function ExpenseListItem({
     id,
@@ -10,9 +11,18 @@ function ExpenseListItem({
     date,
     category,
     description,
-    deleteItem,
-    type
+    type,
+    updateList,
+    setUpdateList
 }) {
+
+    const handleDelete = () => {
+        deleteExpense(id).then((response) => {
+            console.log(response);
+            setUpdateList(!updateList);
+        });
+    }
+
     return (
         <ExpenseListItemStyled>
             <div className="title-con">
@@ -33,6 +43,7 @@ function ExpenseListItem({
                         color={'#fff'}
                         iColor={'#fff'}
                         hColor={'var(--color-green)'}
+                        onClick={handleDelete}
                     />
                 </div>
             </div>
