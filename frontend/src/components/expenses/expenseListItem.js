@@ -3,6 +3,7 @@ import { dollar, calendar, comment, trash } from "./../../utils/icons";
 import StyledButton from "../button/styledButton";
 import { ExpenseListItemStyled } from "./expenseStyles";
 import { deleteExpense } from "./../../api/expenses";
+import { dateFormat } from "../../utils/dateFormat";
 
 function ExpenseListItem({
     id,
@@ -31,7 +32,7 @@ function ExpenseListItem({
             </div>
             <div className="inner-content">
                 <div className="text">
-                    <p>{calendar} {date}</p>
+                    <p>{calendar} {dateFormat(date)}</p>
                     <p>{comment} {description}</p>
                 </div>
                 <div className="btn-con">

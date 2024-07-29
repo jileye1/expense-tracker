@@ -30,6 +30,13 @@ function ExpenseForm({updateList, setUpdateList}) {
             console.log(response);
             setUpdateList(!updateList);
         });
+        setNewExpense({
+            title: '',
+            amount: '',
+            date: '',
+            category: '',
+            description: '',
+        });
     }
 
     return (
