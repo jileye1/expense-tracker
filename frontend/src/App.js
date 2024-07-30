@@ -6,7 +6,7 @@ import { useState } from "react";
 import Dashboard from "./components/dashboard";
 import Expenses from "./components/expenses/expenseIndex";
 import Income from "./components/incomes/incomeIndex";
-import Categories from "./components/categories";
+import Categories from "./components/categoryBudgets/categoryBudgetIndex";
 import Budget from "./components/budget";
 
 
