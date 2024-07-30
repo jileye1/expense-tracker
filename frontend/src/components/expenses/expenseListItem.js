@@ -26,29 +26,25 @@ function ExpenseListItem({
 
     return (
         <ExpenseListItemStyled>
-            <div className="title-con">
-                <h5>{title}</h5>
-                <p>{dollar} {amount}</p>
-            </div>
+            <div className="title-con">{title}</div>
             <div className="inner-content">
-                <div className="text">
-                    <p>{calendar} {dateFormat(date)}</p>
-                    <p>{comment} {description}</p>
-                </div>
-                <div className="btn-con">
-                    <StyledButton
-                        icon={trash}
-                        bPadding={'0.4rem'}
-                        bRadius={'50%'}
-                        bg={'var(--primary-color'}
-                        color={'#fff'}
-                        iColor={'#fff'}
-                        hColor={'var(--color-green)'}
-                        onClick={handleDelete}
-                        height={"60%"}
-                        fontSize={"60%"}
-                    />
-                </div>
+                <div className="amount-con">{dollar} {amount}</div>
+                <div className="date-con">{calendar} {dateFormat(date)}</div>
+                <div className="description-con">{comment} {description}</div>
+            </div>
+            <div className="btn-con">
+                <StyledButton
+                    icon={trash}
+                    bPadding={'0.4rem'}
+                    bRadius={'50%'}
+                    bg={'var(--primary-color'}
+                    color={'#fff'}
+                    iColor={'#fff'}
+                    hColor={'var(--color-green)'}
+                    onClick={handleDelete}
+                    height={"60%"}
+                    fontSize={"60%"}
+                />
             </div>
         </ExpenseListItemStyled>
     )

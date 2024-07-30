@@ -71,33 +71,50 @@ export const ExpenseListItemStyled = styled.div`
     gap: 1rem;
     width: 100%;
     color: #222260;
-    flex-direction: column;
+    align-content: space-between;
 
     .title-con{
-        display: flex;
-        width: 100%;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 1.4rem;
+        gap: 0.5rem;
+        color: var(--primary-color);
+        font-size: 1.0rem;
+        flex: 4;
     }
-
     .inner-content{
         display: flex;
-        width: 100%;
-        justify-content: space-between;
-        align-items: center;
+        flex: 12;
         font-size: 1.0rem;
-        .text{
+        justify-content: stretch;
+        .amount-con{
             display: flex;
             align-items: center;
-            gap: 1.5rem;
-            p{
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                color: var(--primary-color);
-                opacity: 0.8;
-            }
+            gap: 0.1rem;
+            color: var(--primary-color);
+            opacity: 0.8;
+            justify-content: start;
+            flex: 1.5;
         }
+        .date-con{
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            opacity: 0.8;
+            justify-content: start;
+            flex: 3;
+        }
+        .description-con{
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            opacity: 0.8;
+            justify-content: start;
+            flex: 5;
+        }
+    }
+    .btn-con{
+        display: flex;
+        flex: 1;
+        justify-content: flex-end;
     }
 `;
