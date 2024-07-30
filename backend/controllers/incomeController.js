@@ -2,10 +2,9 @@ const IncomeSchema = require("../models/incomeModel");
 
 
 exports.addIncome = async (req, res) => {
-    const {title, amount, date, weekday_hours, weekend_hours, tax} = req.body;
+    const {amount, date, weekday_hours, weekend_hours, tax} = req.body;
 
     const income = IncomeSchema({
-        title,
         amount,
         date,
         weekday_hours,
@@ -15,7 +14,7 @@ exports.addIncome = async (req, res) => {
 
     try {
         // Validations
-        if(!title || !amount || !date || !weekday_hours || !weekend_hours || !tax) {
+        if(!amount || !date || !weekday_hours || !weekend_hours || !tax) {
             return res.status(400).json({message: 'All fields required.'});
         }
         if(amount < 0 || weekday_hours < 0 || weekend_hours < 0 || tax < 0) {
