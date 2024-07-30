@@ -38,13 +38,15 @@ function ExpenseListItem({
                 <div className="btn-con">
                     <StyledButton
                         icon={trash}
-                        bPadding={'1rem'}
+                        bPadding={'0.4rem'}
                         bRadius={'50%'}
                         bg={'var(--primary-color'}
                         color={'#fff'}
                         iColor={'#fff'}
                         hColor={'var(--color-green)'}
                         onClick={handleDelete}
+                        height={"60%"}
+                        fontSize={"60%"}
                     />
                 </div>
             </div>
