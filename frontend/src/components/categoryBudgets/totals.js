@@ -8,9 +8,9 @@ function Totals({total_per_month, total_per_year, total_per_week}) {
         <TotalsStyled>
             <div className="name-con">Totals</div>
             <div className="inner-content">
-                <div className="budget">{dollar} {total_per_year}</div>
-                <div className="budget">{dollar} {total_per_month}</div>
-                <div className="budget">{dollar} {total_per_week}</div>
+                <div className="budget">{dollar} {parseFloat(total_per_year).toFixed(2)}</div>
+                <div className="budget">{dollar} {parseFloat(total_per_month).toFixed(2)}</div>
+                <div className="budget">{dollar} {parseFloat(total_per_week).toFixed(2)}</div>
             </div>
             <div className="btn-con"></div>
         </TotalsStyled>
