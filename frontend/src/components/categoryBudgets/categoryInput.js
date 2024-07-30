@@ -4,7 +4,7 @@ import { postCategory } from "../../api/categories";
 import { trash } from "../../utils/icons";
 import styled from "styled-components";
 
-function CategoryInput({updateList, setUpdateList}) {
+function CategoryInput({updateList, setUpdateList, setCreateCategoryEnabled}) {
 
     const [newCategory, setNewCategory] = useState({
         name: '',
@@ -13,10 +13,15 @@ function CategoryInput({updateList, setUpdateList}) {
         budget_per_week: '',
     })
 
+    const [enableSave, setEnableSave] = useState("hidden");
+
     const { name, budget_per_year, budget_per_month, budget_per_week } = newCategory;
 
     const handleInput = name => e => {
         setNewCategory({...newCategory, [name]: e.target.value});
+        if(newCategory.name && (newCategory.budget_per_year || newCategory.budget_per_month || newCategory.budget_per_week)) {
+            setEnableSave("visible");
+        }
     }
 
     const handleSave = () => {
@@ -62,15 +67,22 @@ function CategoryInput({updateList, setUpdateList}) {
             </div>
             <div className="btn-con">
                 <StyledButton
-                    icon={trash}
-                    bPadding={'0.4rem'}
-                    bRadius={'50%'}
+                    name={'Save'}
+                    bPadding={'.1rem .1rem'}
+                    bRadius={'20px'}
                     bg={'var(--primary-color'}
                     color={'#fff'}
-                    iColor={'#fff'}
-                    hColor={'var(--color-green)'}
                     onClick={handleSave}
-                    height={"60%"}
+                    fontSize={"60%"}
+                    isVisible={enableSave}
+                />
+                <StyledButton
+                    name={'Cancel'}
+                    bPadding={'.1rem .1rem'}
+                    bRadius={'20px'}
+                    bg={'var(--color-grey'}
+                    color={'#fff'}
+                    onClick={() => setCreateCategoryEnabled(false)}
                     fontSize={"60%"}
                 />
             </div>
@@ -130,9 +142,20 @@ const CategoryInputStyled = styled.div`
         }
     }
     .btn-con{
+        gap: 0.4rem;
         display: flex;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        flex-direction: column;
         flex: 1;
-        justify-content: flex-end;
+        justify-content: space-between;
+        button{
+            justify-content: center;
+            box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+            &:hover{
+                background: var(--color-green) !important;
+            }
+        }
     }
 `;
 
