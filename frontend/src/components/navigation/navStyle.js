@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const NavStyled = styled.nav`
 padding: 2rem 1.5rem;
-width: 374px;
+width: 25%;
 height: 100%;
 background: rgba(252, 246, 249, 0.78);
 border: 3px solid #FFFFFF;

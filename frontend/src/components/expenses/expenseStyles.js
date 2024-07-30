@@ -116,5 +116,12 @@ export const ExpenseListItemStyled = styled.div`
         display: flex;
         flex: 1;
         justify-content: flex-end;
+        button{
+            box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+            &:hover{
+                background: var(--color-red) !important;
+            }
+        }
     }
+
 `;
