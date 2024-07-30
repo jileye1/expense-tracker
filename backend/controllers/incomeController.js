@@ -2,23 +2,24 @@ const IncomeSchema = require("../models/incomeModel");
 
 
 exports.addIncome = async (req, res) => {
-    const {title, amount, category, description, date} = req.body;
+    const {title, amount, date, weekday_hours, weekend_hours, tax} = req.body;
 
     const income = IncomeSchema({
         title,
         amount,
-        category,
-        description,
-        date
+        date,
+        weekday_hours,
+        weekend_hours,
+        tax,
     });
 
     try {
         // Validations
-        if(!title || !category || !amount || !description || !date) {
+        if(!title || !amount || !date || !weekday_hours || !weekend_hours || !tax) {
             return res.status(400).json({message: 'All fields required.'});
         }
-        if(amount <= 0) {
-            return res.status(400).json({message: 'Amount must be a positive number.'});
+        if(amount < 0 || weekday_hours < 0 || weekend_hours < 0 || tax < 0) {
+            return res.status(400).json({message: 'Values must be positive.'});
         }
         await income.save();
         res.status(200).json(income);
