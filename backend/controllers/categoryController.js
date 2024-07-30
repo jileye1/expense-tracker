@@ -4,20 +4,12 @@ const CategorySchema = require("../models/categoryModel");
 exports.addCategory = async (req, res) => {
     const { name, budget_per_year, budget_per_month, budget_per_week } = req.body;
 
-    console.log("year: " + budget_per_year)
-    console.log("month: " + budget_per_month)
-    console.log("week: " + budget_per_week)
-
     const category = CategorySchema({
         name,
         budget_per_year,
         budget_per_month,
         budget_per_week
     });
-
-    console.log("cat-year: " + category.budget_per_year)
-    console.log("cat-month: " + category.budget_per_month)
-    console.log("cat-week: " + category.budget_per_week)
 
     try {
         // Validations

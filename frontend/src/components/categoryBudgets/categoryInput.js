@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import StyledButton from "../button/styledButton";
 import { postCategory } from "../../api/categories";
-import { trash } from "../../utils/icons";
 import styled from "styled-components";
 
 function CategoryInput({updateList, setUpdateList, setCreateCategoryEnabled}) {
@@ -26,9 +25,10 @@ function CategoryInput({updateList, setUpdateList, setCreateCategoryEnabled}) {
 
     const handleSave = () => {
         postCategory(newCategory).then((response) => {
-            console.log(response);
+            console.log(response.data);
             setUpdateList(!updateList);
         });
+        setCreateCategoryEnabled(false);
     }
 
     return (
