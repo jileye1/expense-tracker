@@ -8,16 +8,16 @@ router.get('/', (req, res) => {
     res.send("Hello World")
 })
 
-router.post('/add-income', addIncome);
-router.get('/get-incomes', getIncomes);
-router.delete('/delete-income/:id', deleteIncome);
+router.post('/incomes', addIncome);
+router.get('/incomes', getIncomes);
+router.delete('/incomes/:id', deleteIncome);
 
-router.post('/add-expense', addExpense);
-router.get('/get-expenses', getExpenses);
-router.delete('/delete-expense/:id', deleteExpense);
+router.post('/expenses', addExpense);
+router.get('/expenses', getExpenses);
+router.delete('/expenses/:id', deleteExpense);
 
-router.post('/add-category', addCategory);
-router.get('/get-categories', getCategories);
-router.delete('/delete-category/:id', deleteCategory);
+router.post('/categories', addCategory);
+router.get('/categories', getCategories);
+router.delete('/categories/:id', deleteCategory);
 
 module.exports = router;
