@@ -30,7 +30,7 @@ function ExpenseListItem({
             <div className="inner-content">
                 <div className="amount-con">{dollar} {amount}</div>
                 <div className="date-con">{calendar} {dateFormat(date)}</div>
-                <div className="description-con">{comment} {description}</div>
+                <div className="description-con">{comment} {description.length > 20 ? description.substring(0,17) + "..." : description}</div>
             </div>
             <div className="btn-con">
                 <StyledButton
