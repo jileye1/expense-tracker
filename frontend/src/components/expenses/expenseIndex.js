@@ -4,11 +4,18 @@ import ExpenseForm from "./expenseForm";
 import { ExpensesStyled } from "./expenseStyles";
 import { getExpenses } from "./../../api/expenses";
 import ExpenseListItem from "./expenseListItem";
+import ExpenseFilter from "./expenseFilter";
 
 function Expenses() {
 
+    const currentDate = new Date();
+
     const [expenses, setExpenses] = useState([]);
     const [updateList, setUpdateList] = useState(false);
+    const [listHeading, setListHeading] = useState("Recently Added");
+    const [yearSelected, setYearSelected] = useState();
+    const [monthSelected, setMonthSelected] = useState();
+    const [categorySelected, setCategorySelected] = useState();
 
     useEffect(() => {
         getExpenses().then((response) => {
@@ -26,6 +33,8 @@ function Expenses() {
                         <ExpenseForm updateList={updateList} setUpdateList={setUpdateList}/>
                     </div>
                     <div className="expenses">
+                        <ExpenseFilter></ExpenseFilter>
+                        <div>{listHeading}</div>
                         {expenses.map((expense) => {
                             const {_id, title, amount, date, category, description} = expense;
                             return <ExpenseListItem

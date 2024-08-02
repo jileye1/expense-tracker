@@ -10,6 +10,14 @@ export const ExpensesStyled = styled.div`
             flex: 1;
         }
     }
+    .filtering-options{
+        select{
+            color: rgba(34, 34, 96, 0.4);
+            &:focus, &:active{
+                color: rgba(34, 34, 96, 1);
+            }
+        }
+    }
 `;
 
 export const ExpenseFormStyled = styled.form`
@@ -94,6 +102,7 @@ export const ExpenseListItemStyled = styled.div`
             opacity: 0.8;
             justify-content: start;
             flex: 5;
+            overflow: hidden;
         }
     }
     .btn-con{
