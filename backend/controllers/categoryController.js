@@ -16,23 +16,20 @@ exports.addCategory = async (req, res) => {
         if (!name) {
             return res.status(400).json({ message: 'Name required.' });
         }
-        if (!budget_per_year) {
-            if (!budget_per_month) {
-                if (!budget_per_week) {
-                    return res.status(400).json({ message: 'One positive budget field required.' });
-                }
-                // Get budget from week
-                category.budget_per_year = (parseFloat(budget_per_week) / 7) * 365.25;
-                category.budget_per_month = category.budget_per_year / 12;
-            } else {
-                // get budget from month
-                category.budget_per_year = parseFloat(budget_per_month) * 12;
-                category.budget_per_week = (category.budget_per_year / 365.25) * 7;
-            }
-        } else {
+        if(budget_per_year){
             // get budget from year
             category.budget_per_month = parseFloat(budget_per_year) / 12;
             category.budget_per_week = (parseFloat(budget_per_year) / 365.25) * 7;
+        } else if(budget_per_month) {
+            // get budget from month
+            category.budget_per_year = parseFloat(budget_per_month) * 12;
+            category.budget_per_week = (category.budget_per_year / 365.25) * 7;
+        } else if(budget_per_week) {
+            // Get budget from week
+            category.budget_per_year = (parseFloat(budget_per_week) / 7) * 365.25;
+            category.budget_per_month = category.budget_per_year / 12;
+        } else {
+            return res.status(400).json({ message: 'One positive budget field required.' });
         }
 
         category.budget_per_year = category.budget_per_year.toFixed(2)
@@ -60,6 +57,9 @@ exports.getCategories = async (req, res) => {
 exports.deleteCategory = async (req, res) => {
     const { id } = req.params;
     CategorySchema.findByIdAndDelete(id).then((category) => {
+        if(!category){
+            return res.status(404).json({message: "Category not found"});
+        }
         res.status(200).json(category);
     }).catch((error) => {
         res.status(500).json({ message: error });

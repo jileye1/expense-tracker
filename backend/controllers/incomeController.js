@@ -41,6 +41,9 @@ exports.getIncomes = async (req, res) => {
 exports.deleteIncome = async (req, res) => {
     const {id} = req.params;
     IncomeSchema.findByIdAndDelete(id).then((income) => {
+        if(!income){
+            return res.status(404).json({message: "Income not found"});
+        }
         res.status(200).json(income);
     }).catch((error) => {
         res.status(500).json({message: error});

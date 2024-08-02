@@ -56,6 +56,9 @@ exports.getExpenses = async (req, res) => {
 exports.deleteExpense = async (req, res) => {
     const {id} = req.params;
     ExpenseSchema.findByIdAndDelete(id).then((expense) => {
+        if(!expense){
+            return res.status(404).json({message: "Expense not found"});
+        }
         res.status(200).json(expense);
     }).catch((error) => {
         res.status(500).json({message: error});
