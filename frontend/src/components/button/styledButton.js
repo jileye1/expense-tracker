@@ -1,7 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 
-function StyledButton({name, icon, onClick, bg, bPadding, color, bRadius, height, fontSize, isVisible}) {
+function StyledButton({name, icon, onClick, 
+        bg='var(--color-accent', 
+        bPadding=".8rem 1.6rem", 
+        color='#fff', 
+        bRadius="30px", 
+        height="100%", 
+        fontSize="100%", 
+        isVisible="visible"
+    }) {
     return (
         <ButtonStyled style={{
             background: bg,
@@ -29,11 +37,5 @@ const ButtonStyled = styled.button`
     cursor: pointer;
     transition: all .4s ease-in-out;
 `;
-
-StyledButton.defaultProps = {
-    height: "100%",
-    fontSize: "100%",
-    isVisible: "visible"
-}
 
 export default StyledButton;
