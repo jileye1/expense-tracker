@@ -69,6 +69,7 @@ const AppStyled = styled.div`
   position: relative;
   main{
     flex: 1;
+    min-width: 0; // Allows the main to shrink properly
     background: rgba(252, 246, 249, 0.78);
     border: 3px solid #FFFFFF;
     backdrop-filter: blur(4.5px);

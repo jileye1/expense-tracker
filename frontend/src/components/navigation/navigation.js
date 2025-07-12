@@ -28,7 +28,7 @@ function Navigation({activeWindow, setActiveWindow}) {
             </ul>
             <div className='bottom-nav'>
                 <li>
-                    {signout} Sign Out
+                    {signout} <span>Sign Out</span>
                 </li>
             </div>
         </NavStyled>
