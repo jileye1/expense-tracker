@@ -1,35 +1,23 @@
 import React, {useState} from 'react'
 import { menuItems} from '../../utils/menuItems'
 import { signout } from '../../utils/icons'
-import { NavStyled, HamburgerButton, MenuOverlay } from './navStyle'
+import { NavStyled } from './navStyle'
 import avatar from '../../img/avatar.png'
 
 function Navigation({activeWindow, setActiveWindow}) {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    // const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
+    // const toggleMenu = () => {
+    //     setIsMenuOpen(!isMenuOpen);
+    // };
 
-    const handleMenuItemClick = (itemId) => {
-        setActiveWindow(itemId);
-        setIsMenuOpen(false); // Close the menu after selecting an item
-    };
+    // const handleMenuItemClick = (itemId) => {
+    //     setActiveWindow(itemId);
+    //     setIsMenuOpen(false); // Close the menu after selecting an item
+    // };
 
     return (
-        <>
-        {/* Hamburger button - only visible on mobile */}
-        <HamburgerButton onClick={toggleMenu}>
-            <span></span>
-            <span></span>
-            <span></span>
-        </HamburgerButton>
-
-        {/* Overlay for mobile menu */}
-        {isMenuOpen && <MenuOverlay onClick={toggleMenu} />}
-
-        {/* Navigation menu */}
-        <NavStyled className={isMenuOpen ? 'menu-open' : ''}>
+        <NavStyled>
             <div className='user-container'>
                 <img src={avatar} alt=""/>
                 <div>
@@ -41,7 +29,7 @@ function Navigation({activeWindow, setActiveWindow}) {
                 {menuItems.map((item) => {
                     return <li 
                         key={item.id}
-                        onClick={() => handleMenuItemClick(item.id)}
+                        onClick={() => setActiveWindow(item.id)}
                         className={activeWindow === item.id ? 'active' : ''}
                         >
                         {item.icon}
@@ -50,12 +38,11 @@ function Navigation({activeWindow, setActiveWindow}) {
                 })}
             </ul>
             <div className='bottom-nav'>
-                <li onClick={toggleMenu}>
+                <li>
                     {signout} <span>Sign Out</span>
                 </li>
             </div>
         </NavStyled>
-        </>
     )
 }
 

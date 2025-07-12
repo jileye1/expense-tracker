@@ -2,9 +2,10 @@ import styled from "styled-components";
 
 export const MainLayout = styled.div`
     padding: 2rem;
-    height: 100%;
+    height: 100vh;
     display: flex;
     gap: 2rem;
+    overflow: hidden;
 
     @media screen and (max-width: 900px) {
         padding: 1.5rem;
@@ -12,12 +13,8 @@ export const MainLayout = styled.div`
     }
 
     @media screen and (max-width: 768px) {
-        flex-direction: column;
         padding: 1rem;
-        padding-top: 70px;;
         gap: 1rem;
-        height: auto;
-        min-height: 100vh;
     }
 `;
 
