@@ -27,15 +27,8 @@ z-index: 100; // Ensure nav is above main content
 //     padding: 1.5rem 0.8rem;
 // }
 
-// For tablet view - icons only
+// For tablet/mobile view - icons only
 @media screen and (max-width: 900px) {
-    width: 80px;
-    min-width: 80px;
-    padding: 1.5rem 0;
-}
-
-// For mobile view - icons only
-@media screen and (max-width: 768px) {
     width: 80px;
     min-width: 80px;
     padding: 1.5rem 0;
@@ -56,16 +49,8 @@ z-index: 100; // Ensure nav is above main content
         min-height: 80px;
     }
 
-    // For tablet view - icons only
+    // For tablet/mobile view - icons only
     @media screen and (max-width: 900px) {
-        min-height: 60px;
-        gap: 0;
-        justify-content: center; // Align image left like icons
-        padding-left: 0;
-    }
-
-    // For mobile view - icons only
-    @media screen and (max-width: 768px) {
         min-height: 60px;
         gap: 0;
         justify-content: center; // Align image left like icons
@@ -87,18 +72,11 @@ z-index: 100; // Ensure nav is above main content
             height: 60px;   
         }
 
-        // small thumbnail for tablet view
+        // small thumbnail for tablet/mobile view
         @media screen and (max-width: 900px) {
             width: 40px;
             height: 40px; 
             padding: 0.1rem;   
-        }
-
-        // Small thumbnail for mobile view
-        @media screen and (max-width: 768px) {
-            width: 40px;
-            height: 40px; 
-            padding: 0.1rem;  
         }
     }
 
@@ -106,11 +84,7 @@ z-index: 100; // Ensure nav is above main content
         min-width: 0; // Allows text to shrink if necessary
 
         @media screen and (max-width: 900px) {
-            display: none; // Hide text on tablet view
-        }
-
-        @media screen and (max-width: 768px) {
-            display: none; // Hide text on mobile view
+            display: none; // Hide text on tablet/mobile view
         }
     }
     h2{
@@ -140,7 +114,7 @@ z-index: 100; // Ensure nav is above main content
     display: flex;
     flex-direction: column;
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 900px) {
         flex: none; // Prevent flex growth on mobile
     }
 
@@ -166,40 +140,36 @@ z-index: 100; // Ensure nav is above main content
             @media screen and (max-width: 900px) {
                 display: none; // Hide text on tablet view
             }
-
-            @media screen and (max-width: 768px) {
-                display: none; // Hide text on mobile view
-            }
         }
         @media screen and (max-width: 1200px) {
             padding-left: 0.5rem;
             grid-template-columns: 30px 1fr;
-            margin: .4rem 0;
+            // margin: .6rem 0;
             font-size: 0.85rem;
         }
 
-        // For tablet view - icons only
+        // For tablet/mobile view - icons only
         // Center icons
-        @media screen and (max-width: 900px) {
-            grid-template-columns: 1fr;
-            justify-items: center; // center the icon
-            margin: .4rem 0;
-            padding-left: 0;
-            border-radius: 8px; // Add border radius for hover effect
+        // @media screen and (max-width: 900px) {
+        //     grid-template-columns: 1fr;
+        //     justify-items: center; // center the icon
+        //     margin: .4rem 0;
+        //     padding-left: 0;
+        //     border-radius: 8px; // Add border radius for hover effect
 
-            &:hover {
-                background: rgba(34, 34, 96, 0.05);
-            }
-        }
+        //     &:hover {
+        //         background: rgba(34, 34, 96, 0.05);
+        //     }
+        // }
 
-        // For mobile view - icons only
+        // For tablet/mobile view - icons only
         // Centre icons
-        @media screen and (max-width: 768px) {
+        @media screen and (max-width: 900px) {
             grid-template-columns: 1fr; // Single column for icon only
             justify-items: center; // center the icon
-            margin: .6rem 0;
+            // margin: .6rem 0;
             padding-left: 0;
-            padding: 0.4rem; // Add padding for touch targets
+            // padding: 0.4rem; // Add padding for touch targets
             border-radius: 8px; // Add border radius for hover effect
             position: relative; // for positioning tooltip
 
@@ -255,13 +225,6 @@ z-index: 100; // Ensure nav is above main content
             @media screen and (max-width: 1200px) {
                 font-size: 1.2rem;
             }
-            @media screen and (max-width: 900px) {
-                font-size: 1.2rem;
-            }
-
-            @media screen and (max-width: 768px) {
-                font-size: 1.3rem;
-            }
         }
     }
 }
@@ -290,42 +253,25 @@ z-index: 100; // Ensure nav is above main content
             min-width: 0; // Ensures text can shrink properly
 
             @media screen and (max-width: 900px) {
-                display: none; // Hide text on tablet view
-            }
-            @media screen and (max-width: 768px) {
-                display: none; // Hide text on mobile view
+                display: none; // Hide text on tablet/mobile view
             }
         }
 
         @media screen and (max-width: 1200px) {
             padding-left: 0.5rem;
             grid-template-columns: 30px 1fr;
-            margin: .4rem 0;
+            // margin: .4rem 0;
             font-size: 0.85rem;
         }
 
-        // For tablet view - icons only
+        // For tablet/mobile view - icons only
         // Center like menu items
         @media screen and (max-width: 900px) {
             grid-template-columns: 1fr;
-            justify-items: center; // center the icon
-            padding-left: 0;
-            margin: .4rem 0;
-            border-radius: 8px; // Add border radius for hover effect
-
-            &:hover {
-                background: rgba(34, 34, 96, 0.05);
-            }
-        }
-
-        // For mobile view - icons only
-        // Center like menu items
-        @media screen and (max-width: 768px) {
-            grid-template-columns: 1fr;
             justify-items: center;
-            margin: .6rem 0;
+            // margin: .6rem 0;
             padding-left: 0;
-            padding: 0.4rem; // Add padding for touch targets
+            // padding: 0.4rem; // Add padding for touch targets
             border-radius: 8px;
             position: relative; // for positioning tooltip
 
@@ -369,13 +315,6 @@ z-index: 100; // Ensure nav is above main content
             @media screen and (max-width: 1200px) {
                 font-size: 1.2rem;
             }
-            @media screen and (max-width: 900px) {
-                font-size: 1.2rem;
-            }
-
-            @media screen and (max-width: 768px) {
-                font-size: 1.3rem;
-            }
         }
     }
 }
@@ -397,17 +336,6 @@ z-index: 100; // Ensure nav is above main content
 
         // Keep indicator for tablet view
         @media screen and (max-width: 900px) {
-            left: 0;
-            top: 0;
-            bottom: auto;
-            width: 4px;
-            height: 100%;
-            transform: none;
-            border-radius: 0 10px 10px 0;
-        }
-
-        // Keep indicator for mobile view
-        @media screen and (max-width: 768px) {
             left: 0;
             top: 0;
             bottom: auto;
