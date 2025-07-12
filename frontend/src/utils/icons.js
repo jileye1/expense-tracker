@@ -9,3 +9,4 @@ export const plus = <i className="fa-solid fa-plus"></i>
 export const calendar = <i className="fa-solid fa-calendar"></i>
 export const comment = <i className="fa-solid fa-comment"></i>
 export const trash = <i className="fa-solid fa-trash"></i>
+export const close = <i className="fa-solid fa-window-close"></i>

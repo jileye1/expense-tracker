@@ -5,6 +5,8 @@ import { ExpensesStyled } from "./expenseStyles";
 import { getExpenses } from "./../../api/expenses";
 import ExpenseListItem from "./expenseListItem";
 import ExpenseFilter from "./expenseFilter";
+import ExpenseFormModal from "./expenseFormModal";
+import FloatingAddButton from "../button/floatingAddButton";
 
 function Expenses() {
 
@@ -16,6 +18,7 @@ function Expenses() {
     const [yearSelected, setYearSelected] = useState();
     const [monthSelected, setMonthSelected] = useState();
     const [categorySelected, setCategorySelected] = useState();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         getExpenses().then((response) => {
@@ -24,18 +27,24 @@ function Expenses() {
         });
     }, [updateList]);
 
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
     return (
         <ExpensesStyled>
             <InnerLayout>
                 <h1>Expenses</h1>
                 <div className="expense-content">
-                    <div className="form-container">
-                        <ExpenseForm updateList={updateList} setUpdateList={setUpdateList}/>
-                    </div>
-                    <div className="expenses">
-                        <ExpenseFilter></ExpenseFilter>
-                        <div>{listHeading}</div>
-                        {expenses.map((expense) => {
+                    <div className="expenses-list">
+                        <ExpenseFilter />
+                        <div className="list-header">{listHeading}</div>
+                        <div className="expenses-container">
+                            {expenses.map((expense) => {
                             const {_id, title, amount, date, category, description} = expense;
                             return <ExpenseListItem
                                 key={_id}
@@ -49,8 +58,18 @@ function Expenses() {
                                 setUpdateList={setUpdateList} 
                             />
                         })}
+                        </div>
                     </div>
                 </div>
+
+                <FloatingAddButton onClick={handleOpenModal} />
+                
+                <ExpenseFormModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    updateList={updateList}
+                    setUpdateList={setUpdateList}
+                />
             </InnerLayout>
         </ExpensesStyled>
     )
