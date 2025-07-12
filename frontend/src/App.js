@@ -75,6 +75,8 @@ const AppStyled = styled.div`
     backdrop-filter: blur(4.5px);
     border-radius: 32px;
     overflow-x: hidden;
+    position: relative; // create stacking context
+    z-index: 1; // lower z index than nav
     &::-webkit-scrollbar{
       width: 0;
     }

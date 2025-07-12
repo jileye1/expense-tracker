@@ -13,6 +13,8 @@ display: flex;
 flex-direction: column;
 justify-content: space-between;
 gap: 2rem;
+position: relative; // Establish stacking context
+z-index: 100; // Ensure nav is above main content
 
 @media screen and (max-width: 1200px) {
     width: 180px;
@@ -199,9 +201,49 @@ gap: 2rem;
             padding-left: 0;
             padding: 0.4rem; // Add padding for touch targets
             border-radius: 8px; // Add border radius for hover effect
+            position: relative; // for positioning tooltip
 
             &:hover {
                 background: rgba(34, 34, 96, 0.05);
+
+                // Show expanded overlay on hover
+                &::after {
+                    content: attr(data-title);
+                    position: absolute;
+                    left: 100%;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(252, 246, 249, 0.95);
+                    border: 2px solid #FFFFFF;
+                    border-radius: 8px;
+                    padding: 0.5rem 1rem;
+                    white-space: nowrap;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    color: rgba(34, 34, 96, 0.8);
+                    backdrop-filter: blur(4.5px);
+                    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.15);
+                    z-index: 9999; // Ensure tooltip is above other content
+                    margin-left: 0.5rem;
+                    opacity: 0;
+                    animation: fadeInTooltip 0.2s ease-out forwards;
+                    pointer-events: none; // Prevent tooltip from blocking clicks
+                }
+                
+                span {
+                    display: none; // Keep text hidden even on hover
+                }
+            }
+        }
+
+        @keyframes fadeInTooltip {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0);
             }
         }
 
@@ -285,9 +327,38 @@ gap: 2rem;
             padding-left: 0;
             padding: 0.4rem; // Add padding for touch targets
             border-radius: 8px;
+            position: relative; // for positioning tooltip
 
             &:hover {
                 background: rgba(34, 34, 96, 0.05); 
+
+                // Show "Sign Out" tooltip on hover
+                &::after {
+                    content: "Sign Out";
+                    position: absolute;
+                    left: 100%;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(252, 246, 249, 0.95);
+                    border: 2px solid #FFFFFF;
+                    border-radius: 8px;
+                    padding: 0.5rem 1rem;
+                    white-space: nowrap;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    color: rgba(34, 34, 96, 0.8);
+                    backdrop-filter: blur(4.5px);
+                    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.15);
+                    z-index: 9999; // Ensure tooltip is above other content
+                    margin-left: 0.5rem;
+                    opacity: 0;
+                    animation: fadeInTooltip 0.2s ease-out forwards;
+                    pointer-events: none; // Prevent tooltip from blocking clicks
+                }
+                
+                span {
+                    display: none;
+                }
             }
         }
         i{

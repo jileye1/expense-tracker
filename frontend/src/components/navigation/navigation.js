@@ -31,6 +31,7 @@ function Navigation({activeWindow, setActiveWindow}) {
                         key={item.id}
                         onClick={() => setActiveWindow(item.id)}
                         className={activeWindow === item.id ? 'active' : ''}
+                        data-title={item.title}
                         >
                         {item.icon}
                         <span>{item.title}</span>
