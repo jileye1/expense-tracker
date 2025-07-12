@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import bg from './img/bg.png'
-import {MainLayout} from './styles/Layouts'
+import { MainLayout } from './styles/Layouts'
 import Navigation from "./components/navigation/navigation";
 import { useState } from "react";
 import Dashboard from "./components/dashboard";
@@ -8,6 +8,8 @@ import Expenses from "./components/expenses/expenseIndex";
 import Income from "./components/incomes/incomeIndex";
 import Categories from "./components/categoryBudgets/categoryBudgetIndex";
 import Budget from "./components/budget";
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/clerk-react";
+import StyledButton from "./components/button/styledButton";
 
 
 function App() {
@@ -15,7 +17,7 @@ function App() {
   const [activeWindow, setActiveWindow] = useState(1);
 
   const displayActiveWindow = () => {
-    switch(activeWindow){
+    switch (activeWindow) {
       case 1:
         return <Dashboard />
       case 2:
@@ -26,19 +28,37 @@ function App() {
         return <Categories />
       case 5:
         return <Budget />
-      default: 
-      return <Dashboard />
+      default:
+        return <Dashboard />
     }
   }
 
   return (
     <AppStyled bg={bg} className="App">
-        <MainLayout>
-          <Navigation activeWindow={activeWindow} setActiveWindow={setActiveWindow}/>
+      <MainLayout>
+        <SignedOut>
+          <div className="sign-in-container">
+            <h1>Welcome to Your New Budgeting App!</h1>
+            <p>
+              Sign In or Sign Up to start tracking your expenses!
+            </p>
+            <div className="btn-con">
+              <SignInButton mode="modal">
+                <StyledButton name={"Sign In"} />
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <StyledButton name={"Sign Up"} />
+              </SignUpButton>
+            </div>
+          </div>
+        </SignedOut>
+        <SignedIn>
+          <Navigation activeWindow={activeWindow} setActiveWindow={setActiveWindow} />
           <main>
             {displayActiveWindow()}
           </main>
-        </MainLayout>
+        </SignedIn>
+      </MainLayout>
     </AppStyled>
   );
 }
@@ -57,6 +77,20 @@ const AppStyled = styled.div`
     &::-webkit-scrollbar{
       width: 0;
     }
+  }
+  .sign-in-container{
+    margin-top: 100px;
+    align-items: center;
+    h1, p{
+      margin: 10px;
+    }
+  }
+  .btn-con{
+    display: flex;
+    margin: 10px;
+    margin-top: 25px;
+    flex: start;
+    gap: 10px;
   }
 `;
 
