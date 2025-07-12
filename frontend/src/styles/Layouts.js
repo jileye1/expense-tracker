@@ -12,11 +12,12 @@ export const MainLayout = styled.div`
     }
 
     @media screen and (max-width: 768px) {
-        // flex-direction: column;
+        flex-direction: column;
         padding: 1rem;
+        padding-top: 70px;;
         gap: 1rem;
-        // height: auto;
-        // min-height: 100vh;
+        height: auto;
+        min-height: 100vh;
     }
 `;
 

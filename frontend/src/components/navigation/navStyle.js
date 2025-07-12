@@ -24,10 +24,21 @@ gap: 2rem;
     padding: 1.5rem 1rem;
 }
 
+// For mobile view - hidden by default
 @media screen and (max-width: 768px) {
-    width: 180px;
-    min-width: 180px;
-    padding: 1rem 0.5rem;
+    position: fixed;
+    top: 0;
+    left: -280px; // Initially hidden off-screen
+    width: 280px;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease-in-out;
+    border-radius: 0;
+    min-width: unset;
+
+    &.menu-open {
+        left: 0;    
+    }
 }
 
 .user-container{
@@ -169,4 +180,69 @@ gap: 2rem;
         border-radius: 0 10px 10px 0;
     }
 }
+`;
+
+// Hamburger button styles
+export const HamburgerButton = styled.button`
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 40px;
+    height: 40px;
+    background: rgba(252, 246, 249, 0.78);
+    border: 2px solid #FFFFFF;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    backdrop-filter: blur(4.5px);
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 1);
+
+    // Show hamburger button only on mobile
+    @media screen and (max-width: 768px) {
+        display: flex;
+    }
+
+
+    span {
+        width: 100%;
+        height: 3px;
+        background: rgba(34, 34, 96, 0.8);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+        transform-origin: center;
+    }
+
+    &:hover {
+        background: rgba(252, 246, 249, 1);
+
+        span {
+            background: rgba(34, 34, 96, 1);
+        }
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+`;
+
+// Overlay for mobile menu
+export const MenuOverlay = styled.div`
+    display: none;
+
+    @media screen and (max-width: 768px) {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        cursor: pointer;
+    }
 `;
