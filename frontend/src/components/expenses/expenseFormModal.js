@@ -3,6 +3,7 @@ import styled from "styled-components";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { postExpense } from "../../api/expenses";
+import { getCategories } from "../../api/categories";
 import StyledButton from "../button/styledButton";
 import { plus, close } from "../../utils/icons";
 
@@ -15,7 +16,27 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
         description: '',
     });
 
+    const [categories, setCategories] = useState([]);
+    const [loadingCategories, setLoadingCategories] = useState(false);
+
     const { title, amount, date, category, description } = newExpense;
+
+    // Fetch categories when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setLoadingCategories(true);
+            getCategories()
+                .then(response => {
+                    console.log('Categories fetched:', response.data);
+                    setCategories(response.data || []);     
+                })
+                .catch(error => {
+                    console.error('Error fetching categories:', error);
+                    setCategories([]);
+                })
+                .finally(() => setLoadingCategories(false));
+        }
+    }, [isOpen]);
 
     // Close modal on escape key
     useEffect(() => {
@@ -115,10 +136,16 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
                             name="category" 
                             id="category"
                             onChange={handleInput('category')}
+                            disabled={loadingCategories}
                         >
-                            <option value="" disabled>Select category</option>
-                            <option value="groceries">Groceries</option>
-                            <option value="other">Other</option>
+                            <option value="" disabled>
+                                {loadingCategories ? 'Loading categories...' : 'Select a category'}
+                            </option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.name}>
+                                    {cat.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
                     <div className="input-control">
