@@ -43,14 +43,14 @@ export const CategoryItemStyled = styled.div`
     box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
     border-radius: 1px;
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 1rem;
     width: 100%;
     color: #222260;
     align-content: space-between;
-
+    height: 50px;
     .name-con{
         gap: 0.5rem;
         color: var(--primary-color);
@@ -76,6 +76,7 @@ export const CategoryItemStyled = styled.div`
         display: flex;
         flex: 1;
         justify-content: flex-end;
+        align-content: center;
     }
 `;
 

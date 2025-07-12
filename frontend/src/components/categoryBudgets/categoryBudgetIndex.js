@@ -35,7 +35,7 @@ function Categories() {
             <InnerLayout>
                 <h1>Budget</h1>
                 <div className="stats-content">
-                    <div className="income-con">Percentage Income</div>
+                    <div className="income-con">% Income</div>
                 </div>
                 <div className="budget-content">
                     <Totals
