@@ -5,6 +5,7 @@ import { ExpensesStyled } from "./expenseStyles";
 import { getExpenses } from "./../../api/expenses";
 import ExpenseListItem from "./expenseListItem";
 import ExpenseFilter from "./expenseFilter";
+import ExpenseTableHeader from "./expenseTableHeader";
 import ExpenseFormModal from "./expenseFormModal";
 import FloatingAddButton from "../button/floatingAddButton";
 
@@ -43,6 +44,7 @@ function Expenses() {
                     <div className="expenses-list">
                         <ExpenseFilter />
                         <div className="list-header">{listHeading}</div>
+                        <ExpenseTableHeader />
                         <div className="expenses-container">
                             {expenses.map((expense) => {
                             const {_id, title, amount, date, category, description} = expense;

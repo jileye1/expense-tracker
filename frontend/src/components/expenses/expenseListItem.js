@@ -24,26 +24,38 @@ function ExpenseListItem({
         });
     }
 
+    const formatCompactDate = (dateString) => {
+        const expenseDate = new Date(dateString);
+        const options = { day: 'numeric', month: 'short' };
+        return expenseDate.toLocaleDateString('en-US', options);
+    };
+
     return (
         <ExpenseListItemStyled>
-            <div className="title-con">{title}</div>
-            <div className="inner-content">
-                <div className="amount-con">{dollar} {amount}</div>
-                <div className="date-con">{calendar} {dateFormat(date)}</div>
-                <div className="description-con">{comment} {description.length > 20 ? description.substring(0,17) + "..." : description}</div>
+            <div className="expense-title">{title}</div>
+            <div className="expense-amount">
+                <span className="currency">$</span>{amount}
             </div>
-            <div className="btn-con">
+            <div className="expense-date">{formatCompactDate(date)}</div>
+            <div className="expense-category">{category}</div>
+            <div className="expense-description">
+                {description && description.length > 0 ? (
+                    description.length > 35 ? description.substring(0, 32) + "..." : description
+                ) : (
+                    <span className="no-description">—</span>
+                )}
+            </div>
+
+            <div className="expense-actions">
                 <StyledButton
                     icon={trash}
-                    bPadding={'0.4rem'}
-                    bRadius={'50%'}
-                    bg={'var(--primary-color'}
-                    color={'#fff'}
-                    iColor={'#fff'}
-                    hColor={'var(--color-green)'}
+                    bPadding={'0.5rem'}
+                    bRadius={'8px'}
+                    bg={'rgba(244, 67, 54, 0.1)'}
+                    color={'##F44336'}
                     onClick={handleDelete}
-                    height={"60%"}
-                    fontSize={"60%"}
+                    height={"auto"}
+                    fontSize={"0.9rem"}
                 />
             </div>
         </ExpenseListItemStyled>
