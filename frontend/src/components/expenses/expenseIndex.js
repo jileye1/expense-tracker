@@ -28,66 +28,83 @@ function Expenses() {
 
     const applyFilters = (filters) => {
         let filtered = [...allExpenses];
-
+        
         // Apply search filter
         if (filters.searchTerm) {
             const searchLower = filters.searchTerm.toLowerCase();
-            filtered = filtered.filter(expense =>
+            filtered = filtered.filter(expense => 
                 expense.title.toLowerCase().includes(searchLower) ||
-                expense.description.toLowerCase().includes(searchLower) ||
-                expense.category.toLowerCase().includes(searchLower)
+                expense.description?.toLowerCase().includes(searchLower) ||
+                expense.category?.toLowerCase().includes(searchLower)
             );
         }
-
-        // Apply time frame filter
-        if (filters.timeFrame !== 'all') {
+        
+        // Apply month filter
+        if (filters.month !== 'showAll') {
             const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-            filtered = filtered.filter(expense => {
-                const expenseDate = new Date(expense.date);
-                switch (filters.timeFrame) {
-                    case 'today':
-                        return expenseDate >= today;
-                    case 'week':
-                        const weekAgo= new Date(today);
-                        weekAgo.setDate(today.getDate() - 7);
-                        return expenseDate >= weekAgo;
-                    case 'month':
-                        const monthAgo = new Date(today);
-                        monthAgo.setMonth(today.getMonth() - 1);
-                        return expenseDate >= monthAgo;
-                    case 'quarter':
-                        const quarterAgo = new Date(today);
-                        quarterAgo.setMonth(today.getMonth() - 3);
-                        return expenseDate >= quarterAgo;
-                    case 'year':
-                        const yearAgo = new Date(today);
-                        yearAgo.setFullYear(today.getFullYear() - 1);
-                        return expenseDate >= yearAgo;
-                    default:
-                        return true; // 'all' or any other case
-                }
-            });
+            
+            if (filters.month === 'thisMonth') {
+                // Current month and year
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                
+                filtered = filtered.filter(expense => {
+                    const expenseDate = new Date(expense.date);
+                    return expenseDate.getMonth() === currentMonth && 
+                           expenseDate.getFullYear() === currentYear;
+                });
+            } else {
+                // Specific month (any year)
+                const monthIndex = parseInt(filters.month);
+                filtered = filtered.filter(expense => {
+                    const expenseDate = new Date(expense.date);
+                    return expenseDate.getMonth() === monthIndex;
+                });
+            }
         }
-
-        // Apply category filter
-        if (filters.category !== 'all') {
-            filtered = filtered.filter(expense => expense.category.toLowerCase() === filters.category.toLowerCase());
+        
+        // Apply year filter
+        if (filters.year !== 'showAll') {
+            const now = new Date();
+            
+            if (filters.year === 'thisYear') {
+                // Calendar year to date (January 1st to today)
+                const currentYear = now.getFullYear();
+                const yearStart = new Date(currentYear, 0, 1); // January 1st
+                
+                filtered = filtered.filter(expense => {
+                    const expenseDate = new Date(expense.date);
+                    return expenseDate >= yearStart && expenseDate <= now;
+                });
+            } else {
+                // Specific year
+                const selectedYear = parseInt(filters.year);
+                filtered = filtered.filter(expense => {
+                    const expenseDate = new Date(expense.date);
+                    return expenseDate.getFullYear() === selectedYear;
+                });
+            }
         }
-
+        
         setFilteredExpenses(filtered);
-
+        
+        // Update heading based on filters
         updateListHeading(filters, filtered.length);
     };
 
     const updateListHeading = (filters, count) => {
         if (filters.searchTerm) {
-            setListHeading(`Search Results: (${count})`);
-        } else if (filters.timeFrame !== 'all' || filters.category !== 'all') {
-            setListHeading(`Filtered Results: (${count})`);
+            setListHeading(`Search Results (${count})`);
+        } else if (filters.month === 'thisMonth' && filters.year === 'thisYear') {
+            setListHeading(`This Month (${count})`);
+        } else if (filters.month === 'thisMonth') {
+            setListHeading(`This Month (${count})`);
+        } else if (filters.year === 'thisYear') {
+            setListHeading(`This Year (${count})`);
+        } else if (filters.month !== 'showAll' || filters.year !== 'showAll') {
+            setListHeading(`Filtered Results (${count})`);
         } else {
-            setListHeading(`All Expenses: (${count})`);
+            setListHeading(`All Expenses (${count})`);
         }
     };
 

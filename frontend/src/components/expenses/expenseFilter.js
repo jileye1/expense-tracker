@@ -6,65 +6,68 @@ import { getCategories } from "../../api/categories";
 function ExpenseFilter({ onFilterChange, expenses }) {
 
     const [activeFilters, setActiveFilters] = useState({
-        timeFrame: 'all',
-        category: 'all',
+        month: 'thisMonth',
+        year: 'thisYear',
         searchTerm: ''
     });
-    const [categories, setCategories] = useState([]);
+    
     const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-    // Fetch categories on component mount
-    useEffect(() => {
-        getCategories()
-            .then(response => {
-                setCategories(response.data || []);
-            })
-            .catch(error => {
-                console.error("Error fetching categories:", error);
-                setCategories([]);
-            }
-        );
-    }, []);
+    // Generate month options
+    const getMonthOptions = () => {
+        const months = [
+            { value: 'thisMonth', label: 'This Month' },
+            { value: 'showAll', label: 'Show All' },
+            { value: '0', label: 'January' },
+            { value: '1', label: 'February' },
+            { value: '2', label: 'March' },
+            { value: '3', label: 'April' },
+            { value: '4', label: 'May' },
+            { value: '5', label: 'June' },
+            { value: '6', label: 'July' },
+            { value: '7', label: 'August' },
+            { value: '8', label: 'September' },
+            { value: '9', label: 'October' },
+            { value: '10', label: 'November' },
+            { value: '11', label: 'December' }
+        ];
+        return months;
+    };
 
-    // Quick time frame filters
-    const timeFrameOptions = [
-        { value: 'all', label: 'All Time' },
-        { value: 'today', label: 'Today' },
-        { value: 'week', label: 'This Week' },
-        { value: 'month', label: 'This Month' },
-        { value: 'quarter', label: 'This Quarter' },
-        { value: 'year', label: 'This Year' }
-    ];
+    // Generate year options
+    const getYearOptions = () => {
+        const currentYear = new Date().getFullYear();
+        const years = [
+            { value: 'thisYear', label: 'This Year' },
+            { value: 'showAll', label: 'Show All' }
+        ];
+        
+        // Add years from 5 years ago to current year
+        for (let year = currentYear; year >= currentYear - 5; year--) {
+            years.push({ value: year.toString(), label: year.toString() });
+        }
+        
+        return years;
+    };
+
+    // Apply filters on component mount and when activeFilters change
+    useEffect(() => {
+        if (onFilterChange) {
+            onFilterChange(activeFilters);
+        }
+    }, [activeFilters, onFilterChange]);
 
     const handleFilterChange = (filterType, value) => {
         const newFilters = { ...activeFilters, [filterType]: value };
         setActiveFilters(newFilters);
-        
-        // Call parent component's filter handler
-        if (onFilterChange) {
-            onFilterChange(newFilters);
-        }
     };
-
-    const clearAllFilters = () => {
-        const clearedFilters = {
-            timeFrame: 'all',
-            category: 'all',
-            searchTerm: ''
-        };
-        setActiveFilters(clearedFilters);
-        if (onFilterChange) {
-            onFilterChange(clearedFilters);
-        }
-    };
-
-    const hasActiveFilters = activeFilters.timeFrame !== 'all' || activeFilters.category !== 'all' || activeFilters.searchTerm !== '';
 
 
     return (
         <ExpenseFilterStyled>
             {/* Search Input */}
-            <div className={`search-container" ${isSearchFocused ? 'focused' : ''}`}>
+            <div className={`search-container ${isSearchFocused ? 'focused' : ''}`}>
+                <div className="search-icon">🔍</div>
                 <input
                     type="text"
                     placeholder="Search expenses..."
@@ -74,61 +77,40 @@ function ExpenseFilter({ onFilterChange, expenses }) {
                     onBlur={() => setIsSearchFocused(false)}
                     className="search-input"
                 />
-                <div className="search-icon">🔍</div>
             </div>
-            {/* Time Frame Filter */}
-            <div className="filter-section">
-                <span className="filter-label">Time:</span>
-                <div className="filter-pills">
-                    {timeFrameOptions.map(option => (
-                        <button
-                            key={option.value}
-                            className={`filter-pill ${activeFilters.timeFrame === option.value ? 'active' : ''}`}
-                            onClick={() => handleFilterChange('timeFrame', option.value)}
-                        >
-                            {option.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
-            {/* Category Filter */}
-            {categories.length > 0 && (
-                <div className="filter-section">
-                    <span className="filter-label">Category:</span>
-                    <div className="filter-pills">
-                        <button
-                            className={`filter-pill ${activeFilters.category === 'all' ? 'active' : ''}`}
-                            onClick={() => handleFilterChange('category', 'all')}
-                        >
-                            All Categories
-                        </button>
-                        {categories.map((category) => (
-                            <button
-                                key={category._id || category.id}
-                                className={`filter-pill ${activeFilters.category === category.name ? 'active' : ''}`}
-                                onClick={() => handleFilterChange('category', category.name)}
-                            >
-                                {category.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
 
-            {/* Clear Filters */}
-            {hasActiveFilters && (
-                <div className="clear-section">
-                    <StyledButton
-                        name="Clear All"
-                        onClick={clearAllFilters}
-                        bg="rgba(244, 67, 54, 0.1)"
-                        color="#F44336"
-                        bPadding="0.5rem 1rem"
-                        bRadius="20px"
-                        fontSize="0.85rem"
-                    />
+            {/* Filter Dropdowns */}
+            <div className="filter-dropdowns">
+                {/* Month Filtering */}
+                <div className="dropdown-container">
+                    <select
+                        value={activeFilters.month}
+                        onChange={(e) => handleFilterChange('month', e.target.value)}
+                        className="filter-dropdown"
+                    >
+                        {getMonthOptions().map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-            )}
+
+                {/* Year Filtering */}
+                <div className="dropdown-container">
+                    <select
+                        value={activeFilters.year}
+                        onChange={(e) => handleFilterChange('year', e.target.value)}
+                        className="filter-dropdown"
+                    >
+                        {getYearOptions().map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
         </ExpenseFilterStyled>
 
     )
@@ -137,28 +119,29 @@ function ExpenseFilter({ onFilterChange, expenses }) {
 
 const ExpenseFilterStyled = styled.div`
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    align-items: center;
+    gap: 1.5rem;
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(34, 34, 96, 0.08);
     border-radius: 12px;
-    padding: 1.25rem;
+    padding: 1rem 1.25rem;
     margin-bottom: 1.5rem;
     backdrop-filter: blur(4px);
 
     .search-container {
         position: relative;
-        max-width: 300px;
-
+        flex: 1;
+        max-width: 350px;
+        
         .search-input {
             width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            padding: 0.6rem 1rem 0.6rem 2.25rem; 
             border: 2px solid rgba(34, 34, 96, 0.1);
-            border-radius: 25px;
+            border-radius: 8px; 
             background: #FFFFFF;
-            font-size: 0.9rem;
+            font-size: 0.85rem; 
             transition: all 0.3s ease;
-
+            
             &:focus {
                 border-color: var(--color-accent);
                 outline: none;
@@ -168,126 +151,86 @@ const ExpenseFilterStyled = styled.div`
             &::placeholder {
                 color: rgba(34, 34, 96, 0.5);
             }
-
+        }
+        
         .search-icon {
             position: absolute;
             left: 0.75rem;
             top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.9rem;
+            transform: translateY(-50%); 
+            font-size: 0.85rem;
             color: rgba(34, 34, 96, 0.5);
             pointer-events: none;
+            z-index: 1; 
         }
-
+        
         &.focused .search-icon {
             color: var(--color-accent);
         }
     }
 
-    .filter-section {
+    .filter-dropdowns {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-
-        .filter-label {
-            font-weight: 600;
-            color: rgba(34, 34, 96, 0.8);
-            font-size: 0.85rem;
-            min-width: fit-content;
-        }
-
-        .filter-pills {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            flex: 1;
-        }
-
-        .filter-pill {
-            background: rgba(34, 34, 96, 0.06);
-            color: rgba(34, 34, 96, 0.7);
-            border: 1px solid rgba(34, 34, 96, 0.1);
-            border-radius: 20px;
-            padding: 0.4rem 0.8rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-
-            &:hover {
-                background: rgba(34, 34, 96, 0.1);
-                transform: translateY(-1px);
-            }
-            
-            &.active {
-                background: var(--color-accent);
-                color: white;
-                border-color: var(--color-accent);
-                box-shadow: 0 2px 8px rgba(200, 119, 247, 0.3);
-            }
-        }
+        gap: 1rem; 
+        flex-shrink: 0; 
     }
 
-    .clear-section {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 0.5rem;
+    .dropdown-container {
+        position: relative;
         
-        button {
-            transition: all 0.2s ease;
+        .filter-dropdown {
+            background: #FFFFFF;
+            border: 2px solid rgba(34, 34, 96, 0.1);
+            border-radius: 8px; 
+            padding: 0.6rem 2rem 0.6rem 0.75rem; 
+            font-size: 0.85rem; 
+            color: rgba(34, 34, 96, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1rem;
+            min-width: 120px; 
+            
+            &:focus {
+                border-color: var(--color-accent);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(200, 119, 247, 0.1);
+            }
             
             &:hover {
-                background: rgba(244, 67, 54, 0.15) !important;
-                transform: translateY(-1px);
+                border-color: rgba(34, 34, 96, 0.2);
             }
         }
     }
 
     @media screen and (max-width: 768px) {
+        flex-direction: column; 
+        align-items: stretch;
+        gap: 1rem;
         padding: 1rem;
-        gap: 0.75rem;
-
+        
         .search-container {
             max-width: 100%;
         }
-
-        .filter-section {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-
-            .filter-label {
-                font-size: 0.8rem;
-            }
-
-            .filter-pills {
-                width: 100%;
-                justify-content: flex-start;
-            }
-
-            .filter-pill {
-                font-size: 0.75rem;
-                padding: 0.35rem 0.7rem;
-            }
+        
+        .filter-dropdowns {
+            flex-direction: column; 
+            gap: 0.75rem;
         }
-
-        .clear-section {
-            justify-content: center;
+        
+        .dropdown-container .filter-dropdown {
+            width: 100%;
+            min-width: auto;
         }
     }
 
     @media screen and (max-width: 480px) {
         padding: 0.75rem;
-
-        .filter-pills {
-            gap: 0.3rem;
-        }
-
-        .filter-pill {
-            font-size: 0.7rem;
-            padding: 0.3rem 0.6rem;
+        gap: 0.75rem;
+        
+        .filter-dropdowns {
+            gap: 0.5rem;
         }
     }
 `;
