@@ -28,6 +28,13 @@ function Expenses() {
         });
     }, [updateList]);
 
+    // Calculate total of filtered expenses
+    const calculateTotal = () => {
+        return filteredExpenses.reduce((total, expense) => {
+            return total + parseFloat(expense.amount || 0);
+        }, 0);
+    };
+
     const applyFilters = (filters) => {
         let filtered = [...allExpenses];
         
@@ -135,7 +142,12 @@ function Expenses() {
                             onFilterChange={applyFilters}
                             expenses={allExpenses}
                         />
-                        <div className="list-header">{listHeading}</div>
+                        <div className="list-header-container">
+                            <div className="list-header">{listHeading}</div>
+                            <div className="list-total">
+                                Total: <span className="total-amount">${calculateTotal().toFixed(2)}</span>
+                            </div>
+                        </div>
                         <ExpenseTableHeader />
                         <div className="expenses-container">
                             {filteredExpenses.map((expense) => {

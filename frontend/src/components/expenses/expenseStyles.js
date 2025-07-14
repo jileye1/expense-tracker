@@ -15,13 +15,41 @@ export const ExpensesStyled = styled.div`
             margin: 0 auto; // center the content
         }
 
+        .list-header-container{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            
+            @media screen and (max-width: 768px) {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
         .list-header{
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--primary-color);
-            margin: 1.5rem 0 1rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .list-total{
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: rgba(34, 34, 96, 0.7);
+            
+            .total-amount{
+                font-weight: 700;
+                color: var(--primary-color);
+                font-size: 1.2rem;
+            }
+            
+            @media screen and (max-width: 768px) {
+                align-self: flex-end;
+            }
         }
 
         .expenses-container{
