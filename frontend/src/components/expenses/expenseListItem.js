@@ -14,15 +14,31 @@ function ExpenseListItem({
     description,
     type,
     updateList,
-    setUpdateList
+    setUpdateList,
+    onEdit
 }) {
 
-    const handleDelete = () => {
+    const handleDelete = (e) => {
+        e.stopPropagation(); // Prevent edit action if the delete button is clicked
         deleteExpense(id).then((response) => {
             console.log(response);
             setUpdateList(!updateList);
         });
     }
+
+    const handleItemClick = () => {
+        if (onEdit) {
+            const expenseData = {
+                _id: id,
+                title,
+                amount,
+                date,
+                category,
+                description
+            };
+            onEdit(expenseData);
+        }
+    };
 
     const formatCompactDate = (dateString) => {
         const expenseDate = new Date(dateString);
@@ -31,7 +47,7 @@ function ExpenseListItem({
     };
 
     return (
-        <ExpenseListItemStyled>
+        <ExpenseListItemStyled onClick={handleItemClick} className="clickable">
             <div className="expense-title">{title}</div>
             <div className="expense-amount">
                 <span className="currency">$</span>{amount}
@@ -46,7 +62,7 @@ function ExpenseListItem({
                 )}
             </div>
 
-            <div className="expense-actions">
+            <div className="expense-actions" onClick={(e) => e.stopPropagation()}>
                 <StyledButton
                     icon={trash}
                     bPadding={'0.5rem'}

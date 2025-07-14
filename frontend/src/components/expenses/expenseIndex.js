@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { InnerLayout } from "../../styles/Layouts";
-import ExpenseForm from "./expenseForm";
 import { ExpensesStyled } from "./expenseStyles";
 import { getExpenses } from "./../../api/expenses";
 import ExpenseListItem from "./expenseListItem";
@@ -18,6 +17,7 @@ function Expenses() {
     const [updateList, setUpdateList] = useState(false);
     const [listHeading, setListHeading] = useState("Recently Added");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState(null);
 
     // Fetch expenses when the component mounts or when updateList changes
     useEffect(() => {
@@ -125,11 +125,18 @@ function Expenses() {
     };
 
     const handleOpenModal = () => {
+        setSelectedExpense(null); // null = add mode
         setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
+        setSelectedExpense(null); 
+    };
+
+    const handleEditExpense = (expense) => {
+        setSelectedExpense(expense); // expense object = edit mode
+        setIsModalOpen(true);
     };
 
     return (
@@ -162,6 +169,7 @@ function Expenses() {
                                 category={category}  
                                 updateList={updateList}
                                 setUpdateList={setUpdateList} 
+                                onEdit={handleEditExpense}
                             />
                         })}
                         </div>
@@ -173,6 +181,7 @@ function Expenses() {
                 <ExpenseFormModal
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
+                    expense={selectedExpense}
                     updateList={updateList}
                     setUpdateList={setUpdateList}
                 />

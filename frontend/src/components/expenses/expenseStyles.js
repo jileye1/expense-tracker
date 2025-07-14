@@ -130,7 +130,23 @@ export const ExpenseListItemStyled = styled.div`
     transition: all 0.2s ease;
     font-size: 0.85rem;
 
-    &:hover {
+    &.clickable {
+        cursor: pointer;
+
+        &:hover {
+            background: rgba(252, 246, 249, 0.5);
+            border-color: rgba(200, 119, 247, 0.3);
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
+        }
+    }
+
+    &:hover:not(.clickable) {
         background: rgba(252, 246, 249, 0.3);
         border-color: rgba(34, 34, 96, 0.12);
         box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);

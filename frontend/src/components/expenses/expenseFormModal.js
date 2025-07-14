@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { postExpense } from "../../api/expenses";
+import { postExpense, updateExpense } from "../../api/expenses";
 import { getCategories } from "../../api/categories";
 import StyledButton from "../button/styledButton";
 import { plus, close } from "../../utils/icons";
 
-function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
-    const [newExpense, setNewExpense] = useState({
+function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpdateList }) {
+
+    const isEditMode = Boolean(expense);
+    const [formData, setFormData] = useState({
         title: '',
         amount: '',
         date: '',
@@ -18,8 +20,32 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
 
     const [categories, setCategories] = useState([]);
     const [loadingCategories, setLoadingCategories] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { title, amount, date, category, description } = newExpense;
+    const { title, amount, date, category, description } = formData;
+
+    // Set form data when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            if (isEditMode && expense) {
+                setFormData({
+                    title: expense.title || '',
+                    amount: expense.amount || '',
+                    date: new Date(expense.date) || '',
+                    category: expense.category || '',
+                    description: expense.description || '',
+                });
+            } else {
+                setFormData({
+                    title: '',
+                    amount: '',
+                    date: '',
+                    category: '',
+                    description: '',
+                });
+            }
+        }
+    }, [isOpen, isEditMode, expense]);
 
     // Fetch categories when modal opens
     useEffect(() => {
@@ -58,23 +84,45 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
     }, [isOpen, onClose]);
 
     const handleInput = name => e => {
-        setNewExpense({...newExpense, [name]: e.target.value});
+        setFormData({...formData, [name]: e.target.value});
     };
 
-    const handleSubmit = e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        postExpense(newExpense).then((response) => {
-            console.log(response);
-            setUpdateList(!updateList);
-            onClose(); // Close modal after successful submission
-        });
-        setNewExpense({
-            title: '',
-            amount: '',
-            date: '',
-            category: '',
-            description: '',
-        });
+        setIsSubmitting(true);
+
+        try {
+            let response;
+
+            if (isEditMode) {
+                // Update existing expense
+                response = await updateExpense(expense.id, formData);
+                console.log('Expense updated:', response.data);
+            } else {
+                // Create new expense
+                response = await postExpense(formData);
+                console.log('Expense created:', response.data);
+            }
+
+            setUpdateList(!updateList); // Trigger re-fetch of expenses
+            onClose(); // Close modal after submission
+
+            // Reset form data
+            if (!isEditMode) {
+                setFormData({
+                    title: '',
+                    amount: '',
+                    date: '',
+                    category: '',
+                    description: '',
+                });
+            }
+        } catch (error) {
+            console.error(`Error ${isEditMode ? 'updating' : 'creating'} expense`, error);
+            alert('Failed to save expense. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleBackdropClick = (e) => {
@@ -89,7 +137,7 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
         <ModalOverlay onClick={handleBackdropClick}>
             <ModalContent onClick={(e) => e.stopPropagation()}>
                 <ModalHeader>
-                    <h2>Add New Expense</h2>
+                    <h2>{isEditMode ? 'Edit Expense' : 'Add New Expense'}</h2>
                     <CloseButton onClick={onClose}>
                         {close}
                     </CloseButton>
@@ -104,6 +152,7 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
                             placeholder="Expense title"
                             onChange={handleInput('title')}
                             required
+                            disabled={isSubmitting}
                         />
                     </div>
                     <div className="input-control">
@@ -115,6 +164,7 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
                             onChange={handleInput('amount')}
                             step="0.01"
                             required
+                            disabled={isSubmitting}
                         />
                     </div>
                     <div className="input-control">
@@ -124,9 +174,10 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
                             selected={date}
                             dateFormat="dd/MM/yyyy"
                             onChange={(date) => {
-                                setNewExpense({...newExpense, date: date})
+                                setFormData({...formData, date: date})
                             }} 
                             required
+                            disabled={isSubmitting}
                         />
                     </div>
                     <div className="selects input-control">
@@ -136,7 +187,7 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
                             name="category" 
                             id="category"
                             onChange={handleInput('category')}
-                            disabled={loadingCategories}
+                            disabled={loadingCategories || isSubmitting}
                         >
                             <option value="" disabled>
                                 {loadingCategories ? 'Loading categories...' : 'Select a category'}
@@ -157,6 +208,7 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
                             cols="30"
                             rows="3"
                             onChange={handleInput('description')}
+                            disabled={isSubmitting}
                         />
                     </div>
                     <div className="button-group">
@@ -168,14 +220,20 @@ function ExpenseFormModal({ isOpen, onClose, updateList, setUpdateList }) {
                             bRadius={'8px'}
                             color={'#fff'}
                             type="button"
+                            disabled={isSubmitting}
                         />
                         <StyledButton
-                            name={'Save'}
+                            name={
+                                isSubmitting
+                                    ? (isEditMode ? 'Saving...' : 'Adding...')
+                                    : (isEditMode ? 'Save Changes' : 'Add Expense')
+                            }
                             bPadding={'.8rem 2rem'}
                             bRadius={'8px'}
-                            bg={'var(--color-accent)'}
+                            bg={isSubmitting ? 'var(--color-grey)' : 'var(--color-accent)'}
                             color={'#fff'}
                             type="submit"
+                            disabled={isSubmitting}
                         />
                     </div>
                 </ExpenseFormStyled>
