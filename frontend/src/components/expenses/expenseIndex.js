@@ -8,6 +8,8 @@ import ExpenseFilter from "./expenseFilter";
 import ExpenseTableHeader from "./expenseTableHeader";
 import ExpenseFormModal from "./expenseFormModal";
 import FloatingAddButton from "../button/floatingAddButton";
+import { getMonthLabel, getYearLabel } from "../../utils/filterUtils";
+
 
 function Expenses() {
 
@@ -93,18 +95,25 @@ function Expenses() {
     };
 
     const updateListHeading = (filters, count) => {
+        const parts = [];
+        // Add search context
         if (filters.searchTerm) {
-            setListHeading(`Search Results (${count})`);
-        } else if (filters.month === 'thisMonth' && filters.year === 'thisYear') {
-            setListHeading(`This Month (${count})`);
-        } else if (filters.month === 'thisMonth') {
-            setListHeading(`This Month (${count})`);
-        } else if (filters.year === 'thisYear') {
-            setListHeading(`This Year (${count})`);
-        } else if (filters.month !== 'showAll' || filters.year !== 'showAll') {
-            setListHeading(`Filtered Results (${count})`);
-        } else {
+            parts.push(`Search: "${filters.searchTerm}"`);
+        }
+        // Add month context
+        if (filters.month !== 'showAll') {
+            parts.push(getMonthLabel(filters.month));
+        }
+        // Add year context using shared utility  
+        if (filters.year !== 'showAll') {
+            parts.push(getYearLabel(filters.year));
+        }
+        // Build the heading
+        if (parts.length === 0) {
             setListHeading(`All Expenses (${count})`);
+        } else {
+            const context = parts.join(' • ');
+            setListHeading(`${context} (${count})`);
         }
     };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import StyledButton from "../button/styledButton";
 import { getCategories } from "../../api/categories";
+import { getMonthOptions, getYearOptions } from "../../utils/filterUtils.js";
 
 function ExpenseFilter({ onFilterChange, expenses }) {
 
@@ -12,43 +13,6 @@ function ExpenseFilter({ onFilterChange, expenses }) {
     });
     
     const [isSearchFocused, setIsSearchFocused] = useState(false);
-
-    // Generate month options
-    const getMonthOptions = () => {
-        const months = [
-            { value: 'thisMonth', label: 'This Month' },
-            { value: 'showAll', label: 'Show All' },
-            { value: '0', label: 'January' },
-            { value: '1', label: 'February' },
-            { value: '2', label: 'March' },
-            { value: '3', label: 'April' },
-            { value: '4', label: 'May' },
-            { value: '5', label: 'June' },
-            { value: '6', label: 'July' },
-            { value: '7', label: 'August' },
-            { value: '8', label: 'September' },
-            { value: '9', label: 'October' },
-            { value: '10', label: 'November' },
-            { value: '11', label: 'December' }
-        ];
-        return months;
-    };
-
-    // Generate year options
-    const getYearOptions = () => {
-        const currentYear = new Date().getFullYear();
-        const years = [
-            { value: 'thisYear', label: 'This Year' },
-            { value: 'showAll', label: 'Show All' }
-        ];
-        
-        // Add years from 5 years ago to current year
-        for (let year = currentYear; year >= currentYear - 5; year--) {
-            years.push({ value: year.toString(), label: year.toString() });
-        }
-        
-        return years;
-    };
 
     // Apply filters on component mount and when activeFilters change
     useEffect(() => {
