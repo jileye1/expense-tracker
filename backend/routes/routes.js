@@ -1,6 +1,8 @@
 const { addCategory, getCategories, deleteCategory } = require('../controllers/categoryController');
 const { addExpense, getExpenses, deleteExpense } = require('../controllers/expenseController');
 const { addIncome, getIncomes, deleteIncome } = require('../controllers/incomeController');
+const { registerUser, loginUser, getUserProfile } = require('../controllers/authController');
+const { protect } = require('../middleware/authMiddleware');
 
 const router = require('express').Router();
 
@@ -8,16 +10,22 @@ router.get('/', (req, res) => {
     res.send("Hello World")
 })
 
-router.post('/incomes', addIncome);
-router.get('/incomes', getIncomes);
-router.delete('/incomes/:id', deleteIncome);
+// Auth
+router.post('/auth/register', registerUser);
+router.get('/auth/login', loginUser);
+router.delete('/auth/profile', protect, getUserProfile);
 
-router.post('/expenses', addExpense);
-router.get('/expenses', getExpenses);
-router.delete('/expenses/:id', deleteExpense);
+// Protected routes
+router.post('/incomes', protect, addIncome);
+router.get('/incomes', protect, getIncomes);
+router.delete('/incomes/:id', protect, deleteIncome);
 
-router.post('/categories', addCategory);
-router.get('/categories', getCategories);
-router.delete('/categories/:id', deleteCategory);
+router.post('/expenses', protect, addExpense);
+router.get('/expenses', protect, getExpenses);
+router.delete('/expenses/:id', protect, deleteExpense);
+
+router.post('/categories', protect, addCategory);
+router.get('/categories', protect, getCategories);
+router.delete('/categories/:id', protect, deleteCategory);
 
 module.exports = router;

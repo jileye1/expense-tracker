@@ -5,6 +5,7 @@ exports.addCategory = async (req, res) => {
     const { name, budget_per_year, budget_per_month, budget_per_week } = req.body;
 
     const category = CategorySchema({
+        user: req.user.id,
         name,
         budget_per_year,
         budget_per_month,
@@ -47,7 +48,8 @@ exports.addCategory = async (req, res) => {
 
 exports.getCategories = async (req, res) => {
     try {
-        const categories = await CategorySchema.find();
+        // Only get categories for authenticated user
+        const categories = await CategorySchema.find({ user: req.user.id });
         res.status(200).json(categories);
     } catch (error) {
         res.status(500).json({ message: error });
@@ -56,9 +58,13 @@ exports.getCategories = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
     const { id } = req.params;
+
     CategorySchema.findByIdAndDelete(id).then((category) => {
         if(!category){
             return res.status(404).json({message: "Category not found"});
+        }
+        if(category.user != req.user.id){
+            return res.status(403).json({message: "Not authorised"});
         }
         res.status(200).json(category);
     }).catch((error) => {

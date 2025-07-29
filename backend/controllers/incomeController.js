@@ -5,6 +5,7 @@ exports.addIncome = async (req, res) => {
     const {amount, date, weekday_hours, weekend_hours, tax} = req.body;
 
     const income = IncomeSchema({
+        user: req.user.id,
         amount,
         date,
         weekday_hours,
@@ -31,7 +32,7 @@ exports.addIncome = async (req, res) => {
 
 exports.getIncomes = async (req, res) => {
     try {
-        const incomes = await IncomeSchema.find().sort({date: -1});
+        const incomes = await IncomeSchema.find({ user: req.user.id }).sort({date: -1});
         res.status(200).json(incomes);
     } catch (error) {
         res.status(500).json({message: error});
@@ -43,6 +44,9 @@ exports.deleteIncome = async (req, res) => {
     IncomeSchema.findByIdAndDelete(id).then((income) => {
         if(!income){
             return res.status(404).json({message: "Income not found"});
+        }
+        if(income.user != req.user.id){
+            return res.status(403).json({message: "Not authorised"});
         }
         res.status(200).json(income);
     }).catch((error) => {
