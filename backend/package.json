@@ -5,7 +5,22 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+    "testMatch": ["<rootDir>/tests/**/*.test.js"],
+    "collectCoverageFrom": [
+      "controllers/**/*.js",
+      "models/**/*.js",
+      "middleware/**/*.js",
+      "!**/node_modules/**"
+    ],
+    "coverageReporters": ["text", "lcov", "html"]
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +32,10 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1",
     "nodemon": "^3.1.4"
+  },
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "mongodb-memory-server": "^10.1.4",
+    "supertest": "^7.1.4"
   }
 }
