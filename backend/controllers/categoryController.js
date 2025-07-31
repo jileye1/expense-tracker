@@ -59,15 +59,18 @@ exports.getCategories = async (req, res) => {
 exports.deleteCategory = async (req, res) => {
     const { id } = req.params;
 
-    CategorySchema.findByIdAndDelete(id).then((category) => {
+    try {
+        const category = await CategorySchema.findById(id);
+
         if(!category){
             return res.status(404).json({message: "Category not found"});
         }
         if(category.user != req.user.id){
-            return res.status(403).json({message: "Not authorised"});
+            return res.status(403).json({message: "Not authorized"});
         }
+        await CategorySchema.findByIdAndDelete(id);
         res.status(200).json(category);
-    }).catch((error) => {
-        res.status(500).json({ message: error });
-    });
+    } catch (error) {
+        res.status(500).json({message: error});
+    }
 }

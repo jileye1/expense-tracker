@@ -41,15 +41,19 @@ exports.getIncomes = async (req, res) => {
 
 exports.deleteIncome = async (req, res) => {
     const {id} = req.params;
-    IncomeSchema.findByIdAndDelete(id).then((income) => {
+
+    try {
+        const income = await IncomeSchema.findById(id);
+
         if(!income){
             return res.status(404).json({message: "Income not found"});
         }
         if(income.user != req.user.id){
-            return res.status(403).json({message: "Not authorised"});
+            return res.status(403).json({message: "Not authorized"});
         }
+        await IncomeSchema.findByIdAndDelete(id);
         res.status(200).json(income);
-    }).catch((error) => {
+    } catch (error) {
         res.status(500).json({message: error});
-    });
+    }
 }

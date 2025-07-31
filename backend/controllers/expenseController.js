@@ -56,15 +56,19 @@ exports.getExpenses = async (req, res) => {
 
 exports.deleteExpense = async (req, res) => {
     const {id} = req.params;
-    ExpenseSchema.findByIdAndDelete(id).then((expense) => {
+
+    try {
+        const expense = await ExpenseSchema.findById(id);
+
         if(!expense){
             return res.status(404).json({message: "Expense not found"});
         }
         if(expense.user != req.user.id){
-            return res.status(403).json({message: "Not authorised"});
+            return res.status(403).json({message: "Not authorized"});
         }
+        await ExpenseSchema.findByIdAndDelete(id);
         res.status(200).json(expense);
-    }).catch((error) => {
+    } catch (error) {
         res.status(500).json({message: error});
-    });
+    }
 }
