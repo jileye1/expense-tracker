@@ -1,17 +1,9 @@
 const ExpenseSchema = require("../models/expenseModel");
 
 
+// Main endpoint - expenses with existing category
 exports.addExpense = async (req, res) => {
     const {title, amount, category, description, date} = req.body;
-
-    const expense = ExpenseSchema({
-        user: req.user.id,
-        title,
-        amount,
-        category,
-        description,
-        date
-    });
 
     try {
         // Validations
@@ -36,7 +28,35 @@ exports.addExpense = async (req, res) => {
         if(amount <= 0) {
             return res.status(400).json({message: 'Amount must be a positive number.'});
         }
+
+        // Validate  category is valid ObjectId
+        if (typeof category !== 'string' || !category.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({message: 'Category must be a valid category ID.'});
+        }
+
+        // Validate that category exists and belongs to user
+        const categoryExists = await CategorySchema.findOne({
+            _id: category,
+            user: req.user.id
+        });
+
+        if (!categoryExists) {
+            return res.status(400).json({message: 'Invalid category. Category must exist and belong to the user.'});
+        }
+
+        const expense = ExpenseSchema({
+            user: req.user.id,
+            title,
+            amount,
+            category,
+            description,
+            date
+        });
+
         await expense.save();
+
+        await expense.populate('category', 'name');
+
         res.status(200).json(expense);
     } catch (error) {
         res.status(500).json({message: error});
@@ -47,7 +67,10 @@ exports.addExpense = async (req, res) => {
 
 exports.getExpenses = async (req, res) => {
     try {
-        const expenses = await ExpenseSchema.find({ user: req.user.id }).sort({date: -1});
+        const expenses = await ExpenseSchema
+            .find({ user: req.user.id })
+            .populate('category', 'name')
+            .sort({date: -1});
         res.status(200).json(expenses);
     } catch (error) {
         res.status(500).json({message: error});
