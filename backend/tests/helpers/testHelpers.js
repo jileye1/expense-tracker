@@ -2,6 +2,7 @@
 
 const User = require('../../models/userModel');
 const jwt = require('jsonwebtoken');
+const { getJWTSecret } = require('../../utils/config');
 
 
 //-----------USER Helpers------------------
@@ -29,7 +30,7 @@ const createTestUser = async (userData = testUsers.testUser1) => {
 // Generate JWT token for testing
 // generates directly without login process to aid testing protected routes
 const generateTestToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'test_secret', {
+    return jwt.sign({ id: userId }, getJWTSecret(), {
         expiresIn: '1d'
     });
 };

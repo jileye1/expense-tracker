@@ -5,8 +5,18 @@ const mongoose = require('mongoose');
 
 let testdb;
 
+// Set test environment first
+process.env.NODE_ENV = 'test';
+
+require('dotenv').config();
+
 // setup before all tests
 beforeAll(async () => {
+    // verify test environment
+    if (process.env.NODE_ENV !== 'test') {
+        throw new Error('Tests must run in test environment');
+    }
+
     // create in-memory MongoDB instance
     testdb = await MongoMemoryServer.create();
     const uri = testdb.getUri();
