@@ -12,8 +12,8 @@ router.get('/', (req, res) => {
 
 // Auth
 router.post('/auth/register', registerUser);
-router.get('/auth/login', loginUser);
-router.delete('/auth/profile', protect, getUserProfile);
+router.post('/auth/login', loginUser);
+router.get('/auth/profile', protect, getUserProfile);
 
 // Protected routes
 router.post('/incomes', protect, addIncome);
