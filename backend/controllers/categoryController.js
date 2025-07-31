@@ -40,10 +40,13 @@ exports.addCategory = async (req, res) => {
         await category.save();
         res.status(200).json(category);
     } catch (error) {
+        // Catch duplicate (non-unique name-user) error
+        // MongoDB duplicate key error = 11000
+        if(error.code == 11000) {
+            return res.status(400).json({ message: 'Category name already exists. Please use a different name.'});
+        }
         res.status(500).json({ message: error });
     }
-
-    console.log(category);
 }
 
 exports.getCategories = async (req, res) => {

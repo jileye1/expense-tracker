@@ -1,6 +1,7 @@
 // Test utilities
 
 const User = require('../models/userModel');
+const Category = require('../models/categoryModel');
 const jwt = require('jsonwebtoken');
 const { getJWTSecret } = require('../utils/config');
 
@@ -42,13 +43,22 @@ const createUserAndToken = async (userData = testUsers.user1) => {
     return { user, token };
 };
 
+// Create a test category for a user
+const createTestCategoryForUser = async (userId, categoryData = sampleCategory) => {
+    const category = await Category.create({
+        ...categoryData,
+        user: userId
+    });
+    return category;
+};
+
 
 // --------------MODEL Helpers--------------------
 // Sample expense data
 const sampleExpense = {
     title: 'Test Expense',
     amount: 50.99,
-    category: 'Food',
+    // category set in tests
     description: 'Food expense testndescription',
     date: new Date('2024-01-15')
 };
@@ -75,6 +85,7 @@ module.exports = {
     createTestUser,
     generateTestToken,
     createUserAndToken,
+    createTestCategoryForUser,
     sampleExpense,
     sampleIncome,
     sampleCategory

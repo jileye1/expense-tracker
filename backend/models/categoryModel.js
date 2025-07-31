@@ -32,4 +32,7 @@ const CategorySchema = new mongoose.Schema({
     }
 });
 
+// Enforce unique category names per user
+CategorySchema.index({ user: 1, name: 1 }, { unique: true });
+
 module.exports = mongoose.model('Category', CategorySchema);

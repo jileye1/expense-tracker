@@ -33,5 +33,5 @@ try {
 
 /*
 USAGE:
-node scripts/testRunner.js
+node tests/scripts/testRunner.js
 */

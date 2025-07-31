@@ -65,6 +65,10 @@ describe('Category Endpoints', () => {
             expect(response.body).toHaveProperty('budget_per_year');
             expect(response.body).toHaveProperty('budget_per_week');
             expect(response.body).toHaveProperty('user', user1._id.toString());
+
+            // Check calculated values
+            expect(parseFloat(response.body.budget_per_year)).toBe(6000); // 500 * 12
+            expect(parseFloat(response.body.budget_per_week)).toBeCloseTo(115.38, 2);
         });
 
         test('should create month/week budgets with year input only (valid data and token)', async () => {
@@ -85,6 +89,10 @@ describe('Category Endpoints', () => {
             expect(response.body).toHaveProperty('budget_per_year', yearBudgetCategory.budget_per_year);
             expect(response.body).toHaveProperty('budget_per_week');
             expect(response.body).toHaveProperty('user', user1._id.toString());
+
+            // Check calculated values
+            expect(parseFloat(response.body.budget_per_month)).toBe(500); // 6000 / 12
+            expect(parseFloat(response.body.budget_per_week)).toBeCloseTo(115.38, 2);
         });
 
         test('should create year/month budgets with week input only (valid data and token)', async () => {
@@ -105,6 +113,10 @@ describe('Category Endpoints', () => {
             expect(response.body).toHaveProperty('budget_per_year');
             expect(response.body).toHaveProperty('budget_per_week', weekBudgetCategory.budget_per_week);
             expect(response.body).toHaveProperty('user', user1._id.toString());
+
+            // Check calculated values
+            expect(parseFloat(response.body.budget_per_year)).toBeCloseTo(5217.86, 2); // (100 / 7) * 365.25
+            expect(parseFloat(response.body.budget_per_month)).toBeCloseTo(434.82, 2);
         });
 
 
@@ -149,6 +161,48 @@ describe('Category Endpoints', () => {
                 .expect(400);
 
             expect(response.body.message).toContain('budget field required');
+        });
+
+        test('should not create category with duplicate name for same user', async () => {
+            // Create first category
+            await request(app)
+                .post('/api/v1/categories')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(sampleCategory)
+                .expect(200);
+
+            // Try to create second category with same name
+            const duplicateCategory = {
+                ...sampleCategory,
+                budget_per_month: 600 // Different budget, same name
+            };
+
+            const response = await request(app)
+                .post('/api/v1/categories')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(duplicateCategory)
+                .expect(400);
+
+            expect(response.body.message).toContain('already exists');
+        });
+
+        test('should allow same category name for different users', async () => {
+            // User 1 creates category
+            await request(app)
+                .post('/api/v1/categories')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(sampleCategory)
+                .expect(200);
+
+            // User 2 creates category with same name (should work)
+            const response = await request(app)
+                .post('/api/v1/categories')
+                .set('Authorization', `Bearer ${token2}`)
+                .send(sampleCategory)
+                .expect(200);
+
+            expect(response.body).toHaveProperty('name', sampleCategory.name);
+            expect(response.body).toHaveProperty('user', user2._id.toString());
         });
     });
 

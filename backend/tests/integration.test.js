@@ -38,7 +38,7 @@ describe('User Journey Integration Tests', () => {
                 .expect(200);
 
             expect(categoryResponse.body).toHaveProperty('name', categoryData.name);
-            expect(categoryResponse.body).toHaveProperty('budget_per_month', 500);
+            expect(categoryResponse.body).toHaveProperty('budget_per_month', categoryData.budget_per_month);
             expect(categoryResponse.body).toHaveProperty('budget_per_year');
             expect(categoryResponse.body).toHaveProperty('budget_per_week');
             expect(categoryResponse.body).toHaveProperty('user', userId);
