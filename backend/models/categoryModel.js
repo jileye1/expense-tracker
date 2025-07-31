@@ -14,19 +14,19 @@ const CategorySchema = new mongoose.Schema({
     },
     budget_per_year: {
         type: Number,
-        required: true,
+        default: 0,
         maxLength: 20,
         trim: true
     },
     budget_per_month: {
         type: Number,
-        required: true,
+        default: 0,
         maxLength: 20,
         trim: true
     },
     budget_per_week: {
         type: Number,
-        required: true,
+        default: 0,
         maxLength: 20,
         trim: true
     }
