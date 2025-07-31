@@ -68,13 +68,13 @@ describe('Category Endpoints', () => {
 
             // Check calculated values
             expect(parseFloat(response.body.budget_per_year)).toBe(6000); // 500 * 12
-            expect(parseFloat(response.body.budget_per_week)).toBeCloseTo(115.38, 2);
+            expect(parseFloat(response.body.budget_per_week)).toBeCloseTo(114.99, 2);
         });
 
         test('should create month/week budgets with year input only (valid data and token)', async () => {
             const yearBudgetCategory = {
                 name: "Yearly budget",
-                budget_per_year: 600,
+                budget_per_year: 6000,
             };
 
             const response = await request(app)
@@ -92,7 +92,7 @@ describe('Category Endpoints', () => {
 
             // Check calculated values
             expect(parseFloat(response.body.budget_per_month)).toBe(500); // 6000 / 12
-            expect(parseFloat(response.body.budget_per_week)).toBeCloseTo(115.38, 2);
+            expect(parseFloat(response.body.budget_per_week)).toBeCloseTo(114.99, 2);
         });
 
         test('should create year/month budgets with week input only (valid data and token)', async () => {
@@ -115,8 +115,8 @@ describe('Category Endpoints', () => {
             expect(response.body).toHaveProperty('user', user1._id.toString());
 
             // Check calculated values
-            expect(parseFloat(response.body.budget_per_year)).toBeCloseTo(5217.86, 2); // (100 / 7) * 365.25
-            expect(parseFloat(response.body.budget_per_month)).toBeCloseTo(434.82, 2);
+            expect(parseFloat(response.body.budget_per_year)).toBeCloseTo(1043.57, 2); // (20 / 7) * 365.25
+            expect(parseFloat(response.body.budget_per_month)).toBeCloseTo(86.96, 2);
         });
 
 

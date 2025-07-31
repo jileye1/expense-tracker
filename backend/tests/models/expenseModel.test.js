@@ -110,7 +110,8 @@ describe('Expense Model', () => {
         test('should set timestamps automatically', async () => {
             const expense = await Expense.create({
                 ...sampleExpense,
-                user: user._id
+                user: user._id,
+                category: category._id
             });
 
             expect(expense.createdAt).toBeDefined();

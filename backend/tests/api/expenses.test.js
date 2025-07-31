@@ -126,6 +126,7 @@ describe('Expense Endpoints', () => {
         test('should not create expense with negative amount', async () => {
             const invalidExpense = {
                 ...sampleExpense,
+                category: category1._id.toString(),
                 amount: -50
             };
 
@@ -217,7 +218,7 @@ describe('Expense Endpoints', () => {
                 .set('Authorization', `Bearer ${token1}`)
                 .expect(200);
 
-            expect(response.body).toHaveProperty('_id', expense1._id.toString());
+            expect(response.body).toHaveProperty('_id', expenseId.toString());
 
             // Verify expense is deleted
             const deletedExpense = await Expense.findById(expenseId);
