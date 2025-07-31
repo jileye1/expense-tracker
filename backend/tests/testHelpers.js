@@ -1,20 +1,20 @@
 // Test utilities
 
-const User = require('../../models/userModel');
+const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
-const { getJWTSecret } = require('../../utils/config');
+const { getJWTSecret } = require('../utils/config');
 
 
 //-----------USER Helpers------------------
 
 // Test user data
 const testUsers = {
-    testUser1: {
+    user1: {
         name: 'John Doe',
         email: 'john@test.com',
         password: 'johnPassword123'
     },
-    testUser2: {
+    user2: {
         name: 'Jane Smith',
         email: 'jane@test.com',
         password: 'janePassword123'
@@ -22,7 +22,7 @@ const testUsers = {
 };
 
 // Create a test user
-const createTestUser = async (userData = testUsers.testUser1) => {
+const createTestUser = async (userData = testUsers.user1) => {
     const user = await User.create(userData);
     return user;
 };

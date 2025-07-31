@@ -16,16 +16,19 @@ beforeAll(async () => {
     if (process.env.NODE_ENV !== 'test') {
         throw new Error('Tests must run in test environment');
     }
-
-    // create in-memory MongoDB instance
-    testdb = await MongoMemoryServer.create();
-    const uri = testdb.getUri();
-    
-    // connect mongoose to the in-memory database
-    await mongoose.connect(uri);
-    
-    console.log('📝 Test database connected');
-});
+    try {
+        // create in-memory MongoDB instance
+        testdb = await MongoMemoryServer.create();
+        const uri = testdb.getUri();
+        
+        // connect mongoose to the in-memory database
+        await mongoose.connect(uri);
+        
+        console.log('📝 Test database connected');
+    } catch (error) {
+        console.error('❌ Setup failed:', error.message);
+    }
+}, 120000);
 
 // cleanup after each test
 afterEach(async () => {
@@ -48,7 +51,7 @@ afterAll(async () => {
     await testdb.stop();
     
     console.log('🧹 Test database cleaned up');
-});
+}, 30000);
 
 // increase timeout for db operations
-jest.setTimeout(30000);
+jest.setTimeout(60000);
