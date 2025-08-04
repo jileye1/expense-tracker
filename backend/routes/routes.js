@@ -1,5 +1,5 @@
 const { addCategory, getCategories, deleteCategory } = require('../controllers/categoryController');
-const { addExpense, getExpenses, deleteExpense } = require('../controllers/expenseController');
+const { addExpense, addExpenseWithNewCategory, getExpenses, deleteExpense } = require('../controllers/expenseController');
 const { addIncome, getIncomes, deleteIncome } = require('../controllers/incomeController');
 const { registerUser, loginUser, getUserProfile } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
@@ -21,6 +21,7 @@ router.get('/incomes', protect, getIncomes);
 router.delete('/incomes/:id', protect, deleteIncome);
 
 router.post('/expenses', protect, addExpense);
+router.post('/expenses/with-new-category', protect, addExpenseWithNewCategory);
 router.get('/expenses', protect, getExpenses);
 router.delete('/expenses/:id', protect, deleteExpense);
 

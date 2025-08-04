@@ -141,6 +141,230 @@ describe('Expense Endpoints', () => {
     });
 
 
+    // ----------------- Add expense with new category endpoint -------------------
+    describe('POST /api/v1/expenses/with-new-category', () => {
+
+        test('should create expense with new category name', async () => {
+            const expenseData = {
+                ...sampleExpense,
+                categoryName: 'New Category'
+            };
+
+            const response = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(expenseData)
+                .expect(200);
+
+            expect(response.body).toHaveProperty('_id');
+            expect(response.body).toHaveProperty('title', sampleExpense.title);
+            expect(response.body).toHaveProperty('amount', sampleExpense.amount);
+            expect(response.body.category).toHaveProperty('name', 'New Category');
+            expect(response.body.category).toHaveProperty('budget_per_month', 0);
+            expect(response.body).toHaveProperty('user', user1._id.toString());
+            
+            // verify category created
+            const categories = await Category.find({ user: user1._id });
+            expect(categories).toHaveLength(2); // original + new
+            const newCategory = categories.find(cat => cat.name === 'New Category');
+            expect(newCategory).toBeTruthy();
+        });
+
+        test('should use existing category when name already exists', async () => {
+            const expenseData = {
+                ...sampleExpense,
+                categoryName: category1.name // use existing category name
+            };
+
+            const response = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(expenseData)
+                .expect(200);
+
+            expect(response.body.category).toHaveProperty('_id', category1._id.toString());
+            expect(response.body.category).toHaveProperty('name', category1.name);
+            expect(response.body.category).toHaveProperty('budget_per_month', category1.budget_per_month);
+            
+            // verify no new category created
+            const categories = await Category.find({ user: user1._id });
+            expect(categories).toHaveLength(1); // only original
+        });
+
+        test('should trim category names', async () => {
+            const expenseData = {
+                ...sampleExpense,
+                categoryName: '  Entertainment  ' // w spaces
+            };
+
+            const response = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(expenseData)
+                .expect(200);
+
+            expect(response.body.category).toHaveProperty('name', 'Entertainment');
+            
+            // verify category created w trimmed name
+            const category = await Category.findById(response.body.category._id);
+            expect(category.name).toBe('Entertainment');
+        });
+
+        test('should not create expense with empty category name', async () => {
+            const expenseData = {
+                ...sampleExpense,
+                categoryName: '   ' 
+            };
+
+            const response = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(expenseData)
+                .expect(400);
+
+            expect(response.body.message).toContain('non-empty string');
+        });
+
+        test('should not create expense without categoryName', async () => {
+            const expenseData = {
+                ...sampleExpense
+                // missing categoryName
+            };
+
+            const response = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(expenseData)
+                .expect(400);
+
+            expect(response.body.message).toContain('Category name required');
+        });
+
+        test('should not create expense without authentication', async () => {
+            const response = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .send({
+                    ...sampleExpense,
+                    categoryName: 'New Category'
+                })
+                .expect(401);
+
+            expect(response.body.message).toContain('no token');
+        });
+
+        test('should not create expense with missing required fields', async () => {
+            const incompleteExpense = {
+                title: 'Test Expense',
+                categoryName: 'New Category'
+                // missing amount, description, date
+            };
+
+            const response = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(incompleteExpense)
+                .expect(400);
+
+            expect(response.body.message).toContain('required');
+        });
+
+        test('should not create expense with negative amount', async () => {
+            const invalidExpense = {
+                ...sampleExpense,
+                categoryName: 'New Category',
+                amount: -50
+            };
+
+            const response = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(invalidExpense)
+                .expect(400);
+
+            expect(response.body.message).toContain('positive number');
+        });
+
+        test('should handle race condition gracefully', async () => {
+            // simulates two requests trying to create the same category simultaneously
+            const expenseData1 = {
+                ...sampleExpense,
+                title: 'Expense 1',
+                categoryName: 'Race Category'
+            };
+
+            const expenseData2 = {
+                ...sampleExpense,
+                title: 'Expense 2', 
+                categoryName: 'Race Category'
+            };
+
+            // both should succeed one creates category, other uses existing
+            const [response1, response2] = await Promise.all([
+                request(app)
+                    .post('/api/v1/expenses/with-new-category')
+                    .set('Authorization', `Bearer ${token1}`)
+                    .send(expenseData1),
+                request(app)
+                    .post('/api/v1/expenses/with-new-category')
+                    .set('Authorization', `Bearer ${token1}`)
+                    .send(expenseData2)
+            ]);
+
+            expect(response1.status).toBe(200);
+            expect(response2.status).toBe(200);
+            
+            // both should reference same category
+            expect(response1.body.category.name).toBe('Race Category');
+            expect(response2.body.category.name).toBe('Race Category');
+            expect(response1.body.category._id).toBe(response2.body.category._id);
+
+            // only one category should be created
+            const categories = await Category.find({ 
+                user: user1._id, 
+                name: 'Race Category' 
+            });
+            expect(categories).toHaveLength(1);
+        });
+
+        test('should allow different users to create categories with same name', async () => {
+            const expenseData1 = {
+                ...sampleExpense,
+                categoryName: 'Shared Category Name'
+            };
+
+            const expenseData2 = {
+                ...sampleExpense,
+                categoryName: 'Shared Category Name'
+            };
+
+            // user 1 creates expense with new category
+            const response1 = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token1}`)
+                .send(expenseData1)
+                .expect(200);
+
+            // user 2 creates expense with same category name
+            const response2 = await request(app)
+                .post('/api/v1/expenses/with-new-category')
+                .set('Authorization', `Bearer ${token2}`)
+                .send(expenseData2)
+                .expect(200);
+
+            expect(response1.body.category.name).toBe('Shared Category Name');
+            expect(response2.body.category.name).toBe('Shared Category Name');
+            expect(response1.body.category._id).not.toBe(response2.body.category._id);
+
+            // verify both users have own category
+            const user1Categories = await Category.find({ user: user1._id, name: 'Shared Category Name' });
+            const user2Categories = await Category.find({ user: user2._id, name: 'Shared Category Name' });
+            
+            expect(user1Categories).toHaveLength(1);
+            expect(user2Categories).toHaveLength(1);
+        });
+    });
+
+
     // ----------------- Get expenses endpoint -------------------
     describe('GET /api/v1/expenses', () => {
 

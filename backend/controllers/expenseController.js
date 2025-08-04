@@ -64,98 +64,96 @@ exports.addExpense = async (req, res) => {
     }
 }
 
-// // Create expense with new category
-// exports.addExpenseWithNewCategory = async (req, res) => {
-//     const {title, amount, categoryName, description, date} = req.body;
+// Create expense with new category
+exports.addExpenseWithNewCategory = async (req, res) => {
+    const {title, amount, categoryName, description, date} = req.body;
 
-//     try {
-//         // Validations
-//         if(!title) {
-//             return res.status(400).json({message: 'Title required.'});
-//         }
-//         if(!categoryName) {
-//             return res.status(400).json({message: 'Category name required.'});
-//         }
-//         if(!amount) {
-//             return res.status(400).json({message: 'Amount required.'});
-//         }
-//         if(!description) {
-//             return res.status(400).json({message: 'Description required.'});
-//         }
-//         if(!date) {
-//             return res.status(400).json({message: 'Date required.'});
-//         }
-//         if(!title || !categoryName || !amount || !description || !date) {
-//             return res.status(400).json({message: 'All fields required.'});
-//         }
-//         if(amount <= 0) {
-//             return res.status(400).json({message: 'Amount must be a positive number.'});
-//         }
+    try {
+        // Validations
+        if(!title) {
+            return res.status(400).json({message: 'Title required.'});
+        }
+        if(!categoryName) {
+            return res.status(400).json({message: 'Category name required.'});
+        }
+        if(!amount) {
+            return res.status(400).json({message: 'Amount required.'});
+        }
+        if(!description) {
+            return res.status(400).json({message: 'Description required.'});
+        }
+        if(!date) {
+            return res.status(400).json({message: 'Date required.'});
+        }
+        if(!title || !categoryName || !amount || !description || !date) {
+            return res.status(400).json({message: 'All fields required.'});
+        }
+        if(amount <= 0) {
+            return res.status(400).json({message: 'Amount must be a positive number.'});
+        }
 
-//         // Validate category name
-//         if (typeof categoryName !== 'string' || categoryName.trim().length === 0) {
-//             return res.status(400).json({message: 'Category name must be a non-empty string.'});
-//         }
+        // Validate category name
+        if (typeof categoryName !== 'string' || categoryName.trim().length === 0) {
+            return res.status(400).json({message: 'Category name must be a non-empty string.'});
+        }
 
-//         let categoryId;
+        let categoryId;
 
-//         try {
-//             // Try to find existing category with same name
-//             let existingCategory = await CategorySchema.findOne({
-//                 user: req.user.id,
-//                 name: categoryName.trim()
-//             });
+        try {
+            // Try to find existing category with same name
+            let existingCategory = await CategorySchema.findOne({
+                user: req.user.id,
+                name: categoryName.trim()
+            });
 
-//             if (existingCategory) {
-//                 // Use existing category
-//                 categoryId = existingCategory._id;
-//             } else {
-//                 // Create new category with default budget
-//                 const newCategory = new CategorySchema({
-//                     user: req.user.id,
-//                     name: categoryName.trim(),
-//                     budget_per_year: 0,
-//                     budget_per_month: 0,
-//                     budget_per_week: 0
-//                 });
+            if (existingCategory) {
+                // Use existing category
+                categoryId = existingCategory._id;
+            } else {
+                // Create new category with default budget
+                const newCategory = new CategorySchema({
+                    user: req.user.id,
+                    name: categoryName.trim(),
+                    budget_per_year: 0,
+                    budget_per_month: 0,
+                    budget_per_week: 0
+                });
 
-//                 await newCategory.save();
-//                 categoryId = newCategory._id;
-//             }
-//         } catch (categoryError) {
-//             if (categoryError.code === 11000) {
-//                 // Duplicate key error - should not happen due to our check above, but handle gracefully
-//                 const existingCategory = await CategorySchema.findOne({
-//                     user: req.user.id,
-//                     name: categoryName.trim()
-//                 });
-//                 categoryId = existingCategory._id;
-//             } else {
-//                 throw categoryError;
-//             }
-//         }
+                await newCategory.save();
+                categoryId = newCategory._id;
+            }
+        } catch (categoryError) {
+            if (categoryError.code === 11000) {
+                // Duplicate key error - should not happen due to our check above, but handle gracefully
+                const existingCategory = await CategorySchema.findOne({
+                    user: req.user.id,
+                    name: categoryName.trim()
+                });
+                categoryId = existingCategory._id;
+            } else {
+                throw categoryError;
+            }
+        }
 
-//         const expense = ExpenseSchema({
-//             user: req.user.id,
-//             title,
-//             amount,
-//             category: categoryId,
-//             description,
-//             date
-//         });
+        const expense = ExpenseSchema({
+            user: req.user.id,
+            title,
+            amount,
+            category: categoryId,
+            description,
+            date
+        });
 
-//         await expense.save();
+        await expense.save();
         
-//         // Populate the category information before sending response
-//         await expense.populate('category', 'name budget_per_month budget_per_week budget_per_year');
+        // Populate the category information before sending response
+        await expense.populate('category', 'name budget_per_month budget_per_week budget_per_year');
         
-//         res.status(200).json(expense);
-//     } catch (error) {
-//         res.status(500).json({message: error.message});
-//     }
-
-//     console.log(expense);
-// }
+        res.status(200).json(expense);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
 
 exports.getExpenses = async (req, res) => {
     try {
