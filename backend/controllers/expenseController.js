@@ -1,65 +1,38 @@
 const ExpenseSchema = require("../models/expenseModel");
 const CategorySchema = require("../models/categoryModel");
-
+const { validateExpenseFields, validateExistingCategory, createExpenseWithCategory, findCategoryBy } = require("./helpers/expenseControlHelper")
 
 // Main endpoint - expenses with existing category
 exports.addExpense = async (req, res) => {
     const {title, amount, category, description, date} = req.body;
 
     try {
-        // Validations
-        if(!title) {
-            return res.status(400).json({message: 'Title required.'});
-        }
-        if(!category) {
-            return res.status(400).json({message: 'Category required.'});
-        }
-        if(!amount) {
-            return res.status(400).json({message: 'Amount required.'});
-        }
-        if(!description) {
-            return res.status(400).json({message: 'Description required.'});
-        }
-        if(!date) {
-            return res.status(400).json({message: 'Date required.'});
-        }
-        if(!title || !category || !amount || !description || !date) {
-            return res.status(400).json({message: 'All fields required.'});
-        }
-        if(amount <= 0) {
-            return res.status(400).json({message: 'Amount must be a positive number.'});
+        // Validate expense fields
+        const validationError = validateExpenseFields(title, amount, category, description, date);
+        if(validationError) {
+            return res.status(400).json({ message: validationError });
         }
 
-        // Validate  category is valid ObjectId
-        if (typeof category !== 'string' || !category.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).json({message: 'Category must be a valid category ID.'});
-        }
+        // Validate and get existing category
+        const categoryId = await validateExistingCategory("_id", category, req.user.id);
 
-        // Validate that category exists and belongs to user
-        const categoryExists = await CategorySchema.findOne({
-            _id: category,
-            user: req.user.id
-        });
-
-        if (!categoryExists) {
+        if (!categoryId) {
             return res.status(400).json({message: 'Invalid category. Category must exist and belong to the user.'});
         }
 
-        const expense = ExpenseSchema({
-            user: req.user.id,
-            title,
-            amount,
-            category,
-            description,
-            date
-        });
-
-        await expense.save();
-
-        await expense.populate('category', 'name');
+        // Create expense
+        const expense = await createExpenseWithCategory(
+            { title, amount, description, date },
+            categoryId,
+            req.user.id
+        );
 
         res.status(200).json(expense);
     } catch (error) {
+        // Handle validation vs server error
+        if(error.message.includes('Category must be')) {
+            return res.status(400).json({ message: error.message });
+        }
         res.status(500).json({message: error});
     }
 }
@@ -70,50 +43,24 @@ exports.addExpenseWithNewCategory = async (req, res) => {
 
     try {
         // Validations
-        if(!title) {
-            return res.status(400).json({message: 'Title required.'});
+        const validationError = validateExpenseFields(title, amount, categoryName, description, date);
+        if(validationError) {
+            return res.status(400).json({ message: validationError });
         }
-        if(!categoryName) {
-            return res.status(400).json({message: 'Category name required.'});
-        }
-        if(!amount) {
-            return res.status(400).json({message: 'Amount required.'});
-        }
-        if(!description) {
-            return res.status(400).json({message: 'Description required.'});
-        }
-        if(!date) {
-            return res.status(400).json({message: 'Date required.'});
-        }
-        if(!title || !categoryName || !amount || !description || !date) {
-            return res.status(400).json({message: 'All fields required.'});
-        }
-        if(amount <= 0) {
-            return res.status(400).json({message: 'Amount must be a positive number.'});
-        }
-
-        // Validate category name
-        if (typeof categoryName !== 'string' || categoryName.trim().length === 0) {
-            return res.status(400).json({message: 'Category name must be a non-empty string.'});
-        }
-
+        
+        const trimmedName = categoryName.trim();
         let categoryId;
-
         try {
-            // Try to find existing category with same name
-            let existingCategory = await CategorySchema.findOne({
-                user: req.user.id,
-                name: categoryName.trim()
-            });
-
-            if (existingCategory) {
-                // Use existing category
+            // find if existing category exists
+            const existingCategory = await validateExistingCategory("name", trimmedName, req.user.id);
+            
+            if(existingCategory) {
                 categoryId = existingCategory._id;
             } else {
-                // Create new category with default budget
+                // new category with default budget
                 const newCategory = new CategorySchema({
                     user: req.user.id,
-                    name: categoryName.trim(),
+                    name: trimmedName,
                     budget_per_year: 0,
                     budget_per_month: 0,
                     budget_per_week: 0
@@ -124,33 +71,26 @@ exports.addExpenseWithNewCategory = async (req, res) => {
             }
         } catch (categoryError) {
             if (categoryError.code === 11000) {
-                // Duplicate key error - should not happen due to our check above, but handle gracefully
-                const existingCategory = await CategorySchema.findOne({
-                    user: req.user.id,
-                    name: categoryName.trim()
-                });
+                // duplicate key error - another request created the same category (race condition)
+                // find existing category and use instead
+                const existingCategory = await findCategoryBy("name", trimmedName, req.user.id);
                 categoryId = existingCategory._id;
             } else {
                 throw categoryError;
             }
         }
 
-        const expense = ExpenseSchema({
-            user: req.user.id,
-            title,
-            amount,
-            category: categoryId,
-            description,
-            date
-        });
-
-        await expense.save();
-        
-        // Populate the category information before sending response
-        await expense.populate('category', 'name budget_per_month budget_per_week budget_per_year');
-        
+        const expense = await createExpenseWithCategory(
+            { title, amount, description, date },
+            categoryId,
+            req.user.id
+        );
         res.status(200).json(expense);
     } catch (error) {
+        // Handle validation errors vs server errors
+        if (error.message.includes('Category name must be')) {
+            return res.status(400).json({ message: error.message });
+        }
         res.status(500).json({message: error.message});
     }
 }

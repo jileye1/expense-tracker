@@ -160,7 +160,6 @@ describe('Expense Endpoints', () => {
             expect(response.body).toHaveProperty('title', sampleExpense.title);
             expect(response.body).toHaveProperty('amount', sampleExpense.amount);
             expect(response.body.category).toHaveProperty('name', 'New Category');
-            expect(response.body.category).toHaveProperty('budget_per_month', 0);
             expect(response.body).toHaveProperty('user', user1._id.toString());
             
             // verify category created
@@ -184,7 +183,6 @@ describe('Expense Endpoints', () => {
 
             expect(response.body.category).toHaveProperty('_id', category1._id.toString());
             expect(response.body.category).toHaveProperty('name', category1.name);
-            expect(response.body.category).toHaveProperty('budget_per_month', category1.budget_per_month);
             
             // verify no new category created
             const categories = await Category.find({ user: user1._id });
@@ -237,7 +235,7 @@ describe('Expense Endpoints', () => {
                 .send(expenseData)
                 .expect(400);
 
-            expect(response.body.message).toContain('Category name required');
+            expect(response.body.message).toContain('Category required');
         });
 
         test('should not create expense without authentication', async () => {

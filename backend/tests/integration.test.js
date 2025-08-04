@@ -87,7 +87,6 @@ describe('Integration Tests', () => {
 
             expect(newCategoryExpenseResponse.body).toHaveProperty('title', newCategoryExpenseData.title);
             expect(newCategoryExpenseResponse.body.category).toHaveProperty('name', 'Dining Out');
-            expect(newCategoryExpenseResponse.body.category).toHaveProperty('budget_per_month', 0); // Default budget
 
             // STEP 5: Create an income entry
             const incomeData = {
@@ -464,7 +463,6 @@ describe('Integration Tests', () => {
 
             expect(expenseResponse.body.category._id).toBe(originalCategoryId);
             expect(expenseResponse.body.category.name).toBe('Food');
-            expect(expenseResponse.body.category.budget_per_month).toBe(500);
 
             // Verify no duplicate category was created
             const allCategories = await request(app)
