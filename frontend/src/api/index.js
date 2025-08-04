@@ -11,4 +11,33 @@ const axiosInstance = axios.create({
     },
 });
 
+// Set auth token in axios headers
+export const setAuthHeaderToken = (token) => {
+    if(token) {
+        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+        delete axiosInstance.defaults.headers.common['Authorization'];
+    }
+};
+
+export const getStoredToken = () => {
+    return localStorage.getItem('authToken');
+};
+
+
+// Request interceptor to automatically add token to requests
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = getStoredToken();
+        if (token && !config.headers.Authorization) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+
 export default axiosInstance;
