@@ -7,12 +7,12 @@ export const LoginPageStyled = styled.div`
   justify-content: center;
   padding: 20px;
 
-  .auth-container {
+  .login-container {
     width: 100%;
     max-width: 450px;
   }
 
-  .auth-card {
+  .login-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 24px;
@@ -21,7 +21,7 @@ export const LoginPageStyled = styled.div`
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  .auth-header {
+  .card-header {
     text-align: center;
     margin-bottom: 32px;
     
@@ -41,7 +41,7 @@ export const LoginPageStyled = styled.div`
     }
   }
 
-  .auth-form {
+  .login-form {
     .form-group {
       margin-bottom: 24px;
       
@@ -86,11 +86,12 @@ export const LoginPageStyled = styled.div`
       text-align: center;
     }
 
-    .form-actions {
+    .submit-button {
       margin-bottom: 24px;
+      justify-items: center;
       
       button {
-        width: 100%;
+        width: max-content;
         &:disabled {
           opacity: 0.6;
           cursor: not-allowed;
@@ -99,7 +100,7 @@ export const LoginPageStyled = styled.div`
     }
   }
 
-  .auth-toggle {
+  .login-toggle {
     text-align: center;
     
     p {

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuthContext } from '../../contexts/AuthContext';
 import StyledButton from '../../components/button/styledButton';
 import { LoginPageStyled } from './loginStyles';
 
 const LoginPage = () => {
-  const { login, register } = useAuth();
+  const { login, register } = useAuthContext();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
@@ -47,23 +47,23 @@ const LoginPage = () => {
   };
 
   const toggleMode = () => {
-    setIsLogin(!isLoginMode);
+    setIsLoginMode(!isLoginMode);
     setFormData({ name: '', email: '', password: '' });
     setError('');
   };
 
   return (
     <LoginPageStyled>
-      <div className="auth-container">
-        <div className="auth-card">
-          <div className="auth-header">
+      <div className="login-container">
+        <div className="login-card">
+          <div className="card-header">
             <h1>Welcome to Your Budgeting App!</h1>
             <p>
               {isLoginMode ? 'Sign in to continue tracking your expenses' : 'Create an account to start tracking your expenses'}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="auth-form">
+          <form onSubmit={handleSubmit} className="login-form">
             {!isLoginMode && (
               <div className="form-group">
                 <label htmlFor="name">Full Name</label>
@@ -111,7 +111,7 @@ const LoginPage = () => {
               </div>
             )}
 
-            <div className="form-actions">
+            <div className="submit-button">
               <StyledButton 
                 type="submit" 
                 name={loading ? 'Loading...' : (isLoginMode ? 'Sign In' : 'Sign Up')} 
@@ -120,7 +120,7 @@ const LoginPage = () => {
             </div>
           </form>
 
-          <div className="auth-toggle">
+          <div className="login-toggle">
             <p>
               {isLoginMode ? "Don't have an account? " : "Already have an account? "}
               <button 
