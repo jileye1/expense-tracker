@@ -43,10 +43,10 @@ exports.registerUser = async (req, res) => {
                 token: generateToken(user._id)
             });
         } else {
-            res.status(400).json({ message: 'Invalid user data' });
+            return res.status(400).json({ message: 'Invalid user data' });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -62,6 +62,10 @@ exports.loginUser = async (req, res) => {
         // Check for user
         const user = await UserSchema.findOne({ email });
 
+        if(!user) {
+            return res.status(404).json({ message: 'Account with this email does not exist' });
+        }
+
         if (user && (await user.comparePassword(password))) {
             res.json({
                 _id: user._id,
@@ -70,10 +74,10 @@ exports.loginUser = async (req, res) => {
                 token: generateToken(user._id)
             });
         } else {
-            res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -82,6 +86,6 @@ exports.getUserProfile = async (req, res) => {
         const user = await UserSchema.findById(req.user.id).select('-password');
         res.json(user);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
