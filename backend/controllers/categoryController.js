@@ -1,4 +1,5 @@
 const CategorySchema = require("../models/categoryModel");
+const ExpenseSchema = require("../models/expenseModel");
 
 
 exports.addCategory = async (req, res) => {
@@ -71,6 +72,16 @@ exports.deleteCategory = async (req, res) => {
         if(category.user != req.user.id){
             return res.status(403).json({message: "Not authorized"});
         }
+
+        // Check if any expenses are using the category before deleting
+        const expensesUsingCategory = await ExpenseSchema.findOne({ category: id });
+        if (expensesUsingCategory) {
+            return res.status(400).json({
+                message: "Cannot delete category. It is being used by one or more expenses."
+            });
+        }
+
+        
         await CategorySchema.findByIdAndDelete(id);
         res.status(200).json(category);
     } catch (error) {

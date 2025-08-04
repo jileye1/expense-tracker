@@ -4,7 +4,8 @@
 const request = require('supertest');
 const app = require('../testApp');
 const Category = require('../../models/categoryModel');
-const { createUserAndToken, sampleCategory, testUsers } = require('../testHelpers');
+const Expense = require('../../models/expenseModel');
+const { createUserAndToken, sampleCategory, sampleExpense, testUsers } = require('../testHelpers');
 
     //POST
 
@@ -252,43 +253,67 @@ describe('Category Endpoints', () => {
 
     // ----------------- Delete category endpoint -------------------
     describe('DELETE /api/v1/categories/:id', () => {
-        let category1, category2;
+        let categoryId;
 
         // Create categories for both users
         beforeEach(async () => {
-            category1 = await Category.create({ ...sampleCategory, user: user1._id });
-            category2 = await Category.create({ ...sampleCategory, user: user2._id });
+            const category = await Category.create({ 
+                ...sampleCategory, 
+                user: user1._id 
+            });
+            categoryId = category._id;
         });
 
-        test('should delete own category successfully', async () => {
+        test('should delete own category successfully when no expenses tied', async () => {
             const response = await request(app)
-                .delete(`/api/v1/categories/${category1._id}`)
+                .delete(`/api/v1/categories/${categoryId}`)
                 .set('Authorization', `Bearer ${token1}`)
                 .expect(200);
 
-            expect(response.body).toHaveProperty('_id', category1._id.toString());
+            expect(response.body).toHaveProperty('_id', categoryId.toString());
 
             // Verify category is deleted
-            const deletedCategory = await Category.findById(category1._id);
+            const deletedCategory = await Category.findById(categoryId);
             expect(deletedCategory).toBeNull();
+        });
+
+        test('should not delete category when expenses are tied to it', async () => {
+            // create expense using category
+            await Expense.create({
+                ...sampleExpense,
+                user: user1._id,
+                category: categoryId
+            });
+
+            const response = await request(app)
+                .delete(`/api/v1/categories/${categoryId}`)
+                .set('Authorization', `Bearer ${token1}`)
+                .expect(400);
+
+            expect(response.body.message).toContain('Cannot delete category');
+            expect(response.body.message).toContain('being used by one or more expenses');
+
+            // verify category still exists
+            const category = await Category.findById(categoryId);
+            expect(category).toBeTruthy();
         });
 
         test('should not delete other user\'s category', async () => {
             const response = await request(app)
-                .delete(`/api/v1/categories/${category2._id}`)
-                .set('Authorization', `Bearer ${token1}`)
+                .delete(`/api/v1/categories/${categoryId}`)
+                .set('Authorization', `Bearer ${token2}`)
                 .expect(403);
 
             expect(response.body.message).toContain('Not authorized');
 
-            // Verify category still exists
-            const stillExists = await Category.findById(category2._id);
+            // verify category still exists
+            const stillExists = await Category.findById(categoryId);
             expect(stillExists).toBeTruthy();
         });
 
         test('should not delete category without authentication', async () => {
             const response = await request(app)
-                .delete(`/api/v1/categories/${category1._id}`)
+                .delete(`/api/v1/categories/${categoryId}`)
                 .expect(401);
 
             expect(response.body.message).toContain('no token');
@@ -303,6 +328,46 @@ describe('Category Endpoints', () => {
                 .expect(404);
 
             expect(response.body.message).toContain('not found');
+        });
+
+        test('should return 500 for invalid category ID format', async () => {
+            const invalidId = 'invalid_id';
+            const response = await request(app)
+                .delete(`/api/v1/categories/${invalidId}`)
+                .set('Authorization', `Bearer ${token1}`)
+                .expect(500);
+
+            expect(response.body).toHaveProperty('message');
+        });
+
+        test('should allow deleting category after all expenses using it are deleted', async () => {
+            // create an expense using this category
+            const expense = await Expense.create({
+                ...sampleExpense,
+                user: user1._id,
+                category: categoryId
+            });
+
+            // try delete category - should fail
+            await request(app)
+                .delete(`/api/v1/categories/${categoryId}`)
+                .set('Authorization', `Bearer ${token1}`)
+                .expect(400);
+
+            // delete expense
+            await Expense.findByIdAndDelete(expense._id);
+
+            // deleting category should work
+            const response = await request(app)
+                .delete(`/api/v1/categories/${categoryId}`)
+                .set('Authorization', `Bearer ${token1}`)
+                .expect(200);
+
+            expect(response.body).toHaveProperty('_id', categoryId.toString());
+
+            // verify category is deleted
+            const deletedCategory = await Category.findById(categoryId);
+            expect(deletedCategory).toBeNull();
         });
     });
 });
