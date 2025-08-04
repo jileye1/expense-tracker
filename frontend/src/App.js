@@ -8,12 +8,13 @@ import Expenses from "./components/expenses/expenseIndex";
 import Income from "./components/incomes/incomeIndex";
 import Categories from "./components/categoryBudgets/categoryBudgetIndex";
 import Budget from "./components/budget";
-import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/clerk-react";
-import StyledButton from "./components/button/styledButton";
+import { useAuthContext } from "./contexts/AuthContext";
+import LoginPage from "./pages/login/login";
 
 
 function App() {
 
+  const { isAuthenticated, loading } = useAuthContext();
   const [activeWindow, setActiveWindow] = useState(1);
 
   const displayActiveWindow = () => {
@@ -33,32 +34,30 @@ function App() {
     }
   }
 
+  // Show loading spinner while checking authentication
+  if(loading) {
+    return (
+      <AppStyled bg={bg} className="App">
+        <MainLayout>
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Loading...</p>
+          </div>
+        </MainLayout>
+      </AppStyled>
+    );
+  }
+
   return (
     <AppStyled bg={bg} className="App">
-      <MainLayout>
-        <SignedOut>
-          <div className="sign-in-container">
-            <h1>Welcome to Your New Budgeting App!</h1>
-            <p>
-              Sign In or Sign Up to start tracking your expenses!
-            </p>
-            <div className="btn-con">
-              <SignInButton mode="modal">
-                <StyledButton name={"Sign In"} />
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <StyledButton name={"Sign Up"} />
-              </SignUpButton>
-            </div>
-          </div>
-        </SignedOut>
-        <SignedIn>
-          <Navigation activeWindow={activeWindow} setActiveWindow={setActiveWindow} />
-          <main>
-            {displayActiveWindow()}
-          </main>
-        </SignedIn>
-      </MainLayout>
+        {!isAuthenticated() ? ( <LoginPage /> ) : (
+          <MainLayout>
+            <Navigation activeWindow={activeWindow} setActiveWindow={setActiveWindow} />
+            <main>
+              {displayActiveWindow()}
+            </main>
+          </MainLayout>
+        )}
     </AppStyled>
   );
 }
@@ -81,19 +80,33 @@ const AppStyled = styled.div`
       width: 0;
     }
   }
-  .sign-in-container{
-    margin-top: 100px;
+  .loading-container{
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    h1, p{
-      margin: 10px;
+    justify-content: center;
+    height: 100vh;
+    color: #374151;
+
+    .spinner{
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e5e7eb;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 0;
     }
   }
-  .btn-con{
-    display: flex;
-    margin: 10px;
-    margin-top: 25px;
-    flex: start;
-    gap: 10px;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `;
 

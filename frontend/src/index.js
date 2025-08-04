@@ -4,24 +4,18 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { GlobalStyle } from './styles/GlobalStyle';
 import { GlobalProvider } from './contexts/globalContext';
-import { ClerkProvider } from '@clerk/clerk-react';
+import { AuthProvider } from '../src/contexts/AuthContext';
 
-
-const CLERK_PUBLISHABLE_KEY = process.env.REACT_APP_VITE_CLERK_PUBLISHABLE_KEY;
-
-if (!CLERK_PUBLISHABLE_KEY) {
-  throw new Error("Missing Clerk KEY");
-}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <GlobalStyle />
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+    <AuthProvider>
       <GlobalProvider>
         <App />
       </GlobalProvider>
-    </ClerkProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
 
