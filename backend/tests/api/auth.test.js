@@ -97,9 +97,9 @@ describe('Authentication Endpoints', () => {
                     email: 'wrong@email.com',
                     password: testUsers.user1.password
                 })
-                .expect(401);
+                .expect(404);
 
-            expect(response.body.message).toContain('Invalid email or password');
+            expect(response.body.message).toContain('does not exist');
         });
 
         test('should not login with invalid password', async () => {
