@@ -18,6 +18,13 @@ export const postExpense = async (expense) => {
         .catch((err) => err.response.data.message);
 };
 
+export const postExpenseWithNewCategory = async (expense) => {
+    return axiosInstance
+        .post("/expenses/with-new-category", expense)
+        .then((res) => res)
+        .catch((err) => err.response.data.message);
+};
+
 export const updateExpense = async () => {
 
 };

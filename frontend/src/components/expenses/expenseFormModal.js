@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { postExpense, updateExpense } from "../../api/expenses";
+import CreatableSelect from 'react-select/creatable';
+import { postExpense, postExpenseWithNewCategory, updateExpense } from "../../api/expenses";
 import { getCategories } from "../../api/categories";
 import StyledButton from "../button/styledButton";
-import { plus, close } from "../../utils/icons";
+import { close } from "../../utils/icons";
 
 function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpdateList }) {
 
@@ -19,6 +20,8 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
     });
 
     const [categories, setCategories] = useState([]);
+    const [selectCategoryOptions, setSelectCategoryOptions] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [loadingCategories, setLoadingCategories] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -32,9 +35,12 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                     title: expense.title || '',
                     amount: expense.amount || '',
                     date: new Date(expense.date) || '',
-                    category: expense.category || '',
+                    category: expense.category.name || '',
                     description: expense.description || '',
                 });
+                if(expense.category) {
+                    setSelectedCategory({ value: expense.category.name, label: expense.category.name });
+                }
             } else {
                 setFormData({
                     title: '',
@@ -43,6 +49,7 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                     category: '',
                     description: '',
                 });
+                setSelectedCategory(null);
             }
         }
     }, [isOpen, isEditMode, expense]);
@@ -54,11 +61,20 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
             getCategories()
                 .then(response => {
                     console.log('Categories fetched:', response.data);
-                    setCategories(response.data || []);     
+                    const responseCategories = response.data || [];
+                    setCategories(responseCategories);  
+                    
+                    // transform categories for react-select format
+                    const options = responseCategories.map(cat => ({
+                        value: cat.name,
+                        label: cat.name
+                    }));
+                    setSelectCategoryOptions(options);
                 })
                 .catch(error => {
                     console.error('Error fetching categories:', error);
                     setCategories([]);
+                    setSelectCategoryOptions([]);
                 })
                 .finally(() => setLoadingCategories(false));
         }
@@ -87,6 +103,20 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
         setFormData({...formData, [name]: e.target.value});
     };
 
+    const handleCategoryChange = (selectedOption) => {
+        setSelectedCategory(selectedOption);
+        setFormData({
+            ...formData,
+            category: selectedOption ? selectedOption.value : ''
+        });
+    };
+
+    const isNewCategory = (categoryName) => {
+        return !selectCategoryOptions.some(option =>
+            option.value.toLowerCase() == categoryName.toLowerCase()
+        );
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -99,9 +129,18 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                 response = await updateExpense(expense.id, formData);
                 console.log('Expense updated:', response.data);
             } else {
-                // Create new expense
-                response = await postExpense(formData);
-                console.log('Expense created:', response.data);
+                // for new expenses, check is category exists
+                if(isNewCategory(category)) {
+                    // use endpoint with create new
+                    response = await postExpenseWithNewCategory(formData);
+                    console.log(response);
+                    console.log('Expense created with new category:', response.data);
+                } else {
+                    // use regular endpoint
+                    response = await postExpense(formData);
+                    console.log(response);
+                    console.log('Expense created:', response.data);
+                }
             }
 
             setUpdateList(!updateList); // Trigger re-fetch of expenses
@@ -116,6 +155,7 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                     category: '',
                     description: '',
                 });
+                setSelectedCategory(null);
             }
         } catch (error) {
             console.error(`Error ${isEditMode ? 'updating' : 'creating'} expense`, error);
@@ -181,23 +221,22 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                         />
                     </div>
                     <div className="selects input-control">
-                        <select 
-                            required 
-                            value={category} 
-                            name="category" 
-                            id="category"
-                            onChange={handleInput('category')}
-                            disabled={loadingCategories || isSubmitting}
-                        >
-                            <option value="" disabled>
-                                {loadingCategories ? 'Loading categories...' : 'Select a category'}
-                            </option>
-                            {categories.map((cat) => (
-                                <option key={cat.id} value={cat.name}>
-                                    {cat.name}
-                                </option>
-                            ))}
-                        </select>
+                        <CreatableSelect 
+                            value={selectedCategory}
+                            onChange={handleCategoryChange}
+                            options={selectCategoryOptions}
+                            placeholder={loadingCategories ? 'Loading categories' : 'Select or create category'}
+                            isDisabled={loadingCategories || isSubmitting}
+                            isLoading={loadingCategories}
+                            isClearable
+                            formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
+                            noOptionsMessage={() => "No categories found"}
+                        />
+                        {selectedCategory && isNewCategory(selectedCategory.value) && (
+                            <div className="new-category-hint">
+                                <span>New category "{selectedCategory.value}" will be created</span>
+                            </div>
+                        )}
                     </div>
                     <div className="input-control">
                         <textarea 
@@ -358,15 +397,15 @@ const ExpenseFormStyled = styled.form`
                 width: 100%;
             }
         }
-    }
 
-    .selects {
-        select {
-            color: rgba(34, 34, 96, 0.6);
-            
-            &:focus, &:valid {
-                color: rgba(34, 34, 96, 1);
-            }
+        .new-category-hint {
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(66, 173, 0, 0.1);
+            border: 1px solid rgba(66, 173, 0, 0.2);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--color-green);
         }
     }
 
