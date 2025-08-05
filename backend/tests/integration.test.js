@@ -74,13 +74,13 @@ describe('Integration Tests', () => {
             const newCategoryExpenseData = {
                 title: 'Coffee',
                 amount: 12.50,
-                categoryName: 'Dining Out', // Using category name to create new category
+                category: 'Dining Out', // Using category name to create new category
                 description: 'Morning coffee at cafe',
                 date: new Date('2024-01-16')
             };
 
             const newCategoryExpenseResponse = await request(app)
-                .post('/api/v1/expenses/with-new-category')
+                .post('/api/v1/expenses')
                 .set('Authorization', `Bearer ${token}`)
                 .send(newCategoryExpenseData)
                 .expect(200);
@@ -253,24 +253,24 @@ describe('Integration Tests', () => {
 
             // Create expenses using new category endpoint
             await request(app)
-                .post('/api/v1/expenses/with-new-category')
+                .post('/api/v1/expenses')
                 .set('Authorization', `Bearer ${user1Token}`)
                 .send({
                     title: 'User 1 New Category Expense',
                     amount: 30,
-                    categoryName: 'Shared Category Name',
+                    category: 'Shared Category Name',
                     description: 'User 1 new category expense',
                     date: new Date()
                 })
                 .expect(200);
 
             await request(app)
-                .post('/api/v1/expenses/with-new-category')
+                .post('/api/v1/expenses')
                 .set('Authorization', `Bearer ${user2Token}`)
                 .send({
                     title: 'User 2 New Category Expense',
                     amount: 40,
-                    categoryName: 'Shared Category Name', // Same name but different user
+                    category: 'Shared Category Name', // Same name but different user
                     description: 'User 2 new category expense',
                     date: new Date()
                 })
@@ -374,7 +374,7 @@ describe('Integration Tests', () => {
                 { 
                     title: 'Gas', 
                     amount: 50, 
-                    categoryName: 'Transportation', // Existing category name
+                    category: 'Transportation', // Existing category name
                     description: 'Fill up tank', 
                     date: new Date() 
                 },
@@ -382,7 +382,7 @@ describe('Integration Tests', () => {
                 { 
                     title: 'Coffee', 
                     amount: 15, 
-                    categoryName: 'Dining Out', // New category name
+                    category: 'Dining Out', // New category name
                     description: 'Morning coffee', 
                     date: new Date() 
                 }
@@ -398,7 +398,7 @@ describe('Integration Tests', () => {
             // Create second and third expenses using new category endpoint
             for (let i = 1; i < expenses.length; i++) {
                 await request(app)
-                    .post('/api/v1/expenses/with-new-category')
+                    .post('/api/v1/expenses')
                     .set('Authorization', `Bearer ${token}`)
                     .send(expenses[i])
                     .expect(200);
@@ -450,12 +450,12 @@ describe('Integration Tests', () => {
 
             // Try to create expense with existing category name (should use existing)
             const expenseResponse = await request(app)
-                .post('/api/v1/expenses/with-new-category')
+                .post('/api/v1/expenses')
                 .set('Authorization', `Bearer ${token}`)
                 .send({
                     title: 'Lunch',
                     amount: 25,
-                    categoryName: 'Food', // Should use existing category
+                    category: 'Food', // Should use existing category
                     description: 'Lunch at restaurant',
                     date: new Date()
                 })
@@ -501,7 +501,7 @@ describe('Integration Tests', () => {
 
             // Test validation error format for new category expense endpoint
             const newCategoryValidationErrorResponse = await request(app)
-                .post('/api/v1/expenses/with-new-category')
+                .post('/api/v1/expenses')
                 .set('Authorization', `Bearer ${token}`)
                 .send({}) // Empty body to trigger validation error
                 .expect(400);
@@ -537,19 +537,6 @@ describe('Integration Tests', () => {
 
             const categoryId = categoryResponse.body._id;
 
-            // Test creating expense with invalid category format on regular endpoint
-            await request(app)
-                .post('/api/v1/expenses')
-                .set('Authorization', `Bearer ${token}`)
-                .send({
-                    title: 'Test Expense',
-                    amount: 100,
-                    category: 'invalid_id_format',
-                    description: 'Test description',
-                    date: new Date()
-                })
-                .expect(400);
-
             // Test creating expense with non-existent category on regular endpoint
             await request(app)
                 .post('/api/v1/expenses')
@@ -578,12 +565,12 @@ describe('Integration Tests', () => {
 
             // Test creating valid expense on new category endpoint
             await request(app)
-                .post('/api/v1/expenses/with-new-category')
+                .post('/api/v1/expenses')
                 .set('Authorization', `Bearer ${token}`)
                 .send({
                     title: 'Another Test Expense',
                     amount: 150,
-                    categoryName: 'New Category',
+                    category: 'New Category',
                     description: 'Another test description',
                     date: new Date()
                 })

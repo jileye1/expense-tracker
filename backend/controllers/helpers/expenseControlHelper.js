@@ -24,6 +24,9 @@ const validateExpenseFields = (title, amount, category, description, date) => {
     if (amount <= 0) {
         return 'Amount must be a positive number.';
     }
+    if(typeof category !== 'string' || category.trim().length === 0) {
+        return 'Category must be a non-empty string.'
+    }
     return null; // No validation errors
 };
 
@@ -34,20 +37,28 @@ const findCategoryBy = async (fieldName, value, userId) => {
     return await CategorySchema.findOne(query);
 };
 
-
-// Helper function to validate and get existing category by ObjectId
-const validateExistingCategory = async (fieldName, value, userId) => {
-    // Validate that category is a valid ObjectId
-    if (fieldName == "_id" && (typeof value !== 'string' || !value.match(/^[0-9a-fA-F]{24}$/))){
-        throw new Error('Category must be a valid category ID.');
-    } else if (fieldName == "name" && (typeof value !== 'string' || value.length === 0)) {
-        throw new Error('Category name must be a non-empty string.');
+// Helper function to find existing category by name, or create if not already exists
+const findOrCreateCategory = async (categoryName, userId) => {
+    // find if existing category exists
+    existingCategory = await findCategoryBy('name', categoryName, userId);
+                    
+    // if not existing category
+    if(!existingCategory) {
+        // create new category with default budget
+        const newCategory = new CategorySchema({
+            user: userId,
+            name: categoryName,
+            budget_per_year: 0,
+            budget_per_month: 0,
+            budget_per_week: 0
+        });
+    
+        await newCategory.save();
+        return newCategory;
+    } else {
+        return existingCategory;
     }
-
-    return await findCategoryBy(fieldName, value, userId);
-};
-
-
+}
 
 // Helper function to create and populate expense
 const createExpenseWithCategory = async (expenseData, categoryId, userId) => {
@@ -69,4 +80,4 @@ const createExpenseWithCategory = async (expenseData, categoryId, userId) => {
 };
 
 
-module.exports = { validateExpenseFields, validateExistingCategory, createExpenseWithCategory, findCategoryBy };
+module.exports = { validateExpenseFields, createExpenseWithCategory, findCategoryBy, findOrCreateCategory };
