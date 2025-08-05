@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { InnerLayout } from "../../styles/Layouts";
 import { ExpensesStyled } from "./expenseStyles";
 import { getExpenses } from "./../../api/expenses";
@@ -35,7 +35,30 @@ function Expenses() {
         }, 0);
     };
 
-    const applyFilters = (filters) => {
+    const updateListHeading = useCallback((filters, count) => {
+        const parts = [];
+        // Add search context
+        if (filters.searchTerm) {
+            parts.push(`Search: "${filters.searchTerm}"`);
+        }
+        // Add month context
+        if (filters.month !== 'showAll') {
+            parts.push(getMonthLabel(filters.month));
+        }
+        // Add year context using shared utility  
+        if (filters.year !== 'showAll') {
+            parts.push(getYearLabel(filters.year));
+        }
+        // Build the heading
+        if (parts.length === 0) {
+            setListHeading(`All Expenses (${count})`);
+        } else {
+            const context = parts.join(' • ');
+            setListHeading(`${context} (${count})`);
+        }
+    }, []);
+
+    const applyFilters = useCallback((filters) => {
         let filtered = [...allExpenses];
         
         // Apply search filter
@@ -44,7 +67,7 @@ function Expenses() {
             filtered = filtered.filter(expense => 
                 expense.title.toLowerCase().includes(searchLower) ||
                 expense.description?.toLowerCase().includes(searchLower) ||
-                expense.category?.toLowerCase().includes(searchLower)
+                expense.category?.name.toLowerCase().includes(searchLower)
             );
         }
         
@@ -99,30 +122,7 @@ function Expenses() {
         
         // Update heading based on filters
         updateListHeading(filters, filtered.length);
-    };
-
-    const updateListHeading = (filters, count) => {
-        const parts = [];
-        // Add search context
-        if (filters.searchTerm) {
-            parts.push(`Search: "${filters.searchTerm}"`);
-        }
-        // Add month context
-        if (filters.month !== 'showAll') {
-            parts.push(getMonthLabel(filters.month));
-        }
-        // Add year context using shared utility  
-        if (filters.year !== 'showAll') {
-            parts.push(getYearLabel(filters.year));
-        }
-        // Build the heading
-        if (parts.length === 0) {
-            setListHeading(`All Expenses (${count})`);
-        } else {
-            const context = parts.join(' • ');
-            setListHeading(`${context} (${count})`);
-        }
-    };
+    }, [allExpenses, updateListHeading]);
 
     const handleOpenModal = () => {
         setSelectedExpense(null); // null = add mode
@@ -166,7 +166,7 @@ function Expenses() {
                                 description={description}
                                 amount={amount}
                                 date={date}
-                                category={category}  
+                                category={category.name}  
                                 updateList={updateList}
                                 setUpdateList={setUpdateList} 
                                 onEdit={handleEditExpense}
