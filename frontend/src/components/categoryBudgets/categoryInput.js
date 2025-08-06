@@ -96,26 +96,25 @@ function CategoryInput({updateList, setUpdateList, setCreateCategoryEnabled}) {
 }
 
 const CategoryInputStyled = styled.div`
-    background: #FCF6F9;
-    border: 2px solid #FFFFFF;
-    box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-    border-radius: 1px;
-    padding: 1rem;
+
+    padding: 0.1rem;
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.3rem;
     width: 100%;
     color: #222260;
     align-content: space-between;
     height: 50px;
 
     input{
-        resize: horizontal;
+        width: 100%; 
+        min-width: 0;
+        background: white;
+        border: 1px solid #27168847;
     }
 
     .name-con{
-        gap: 0.5rem;
         color: var(--primary-color);
         font-size: 1.0rem;
         flex: 4;
@@ -125,10 +124,11 @@ const CategoryInputStyled = styled.div`
         flex: 12;
         font-size: 1.0rem;
         justify-content: stretch;
+        gap: 0.3rem;
         .budget{
             display: flex;
             align-items: center;
-            gap: 0.1rem;
+            padding-right: 1rem;
             color: var(--primary-color);
             opacity: 0.8;
             justify-content: start;
@@ -136,13 +136,14 @@ const CategoryInputStyled = styled.div`
         }
     }
     .btn-con{
-        gap: 0.4rem;
+        gap: 0.2rem;
         display: flex;
         padding-left: 1rem;
-        padding-right: 2rem;
         flex-direction: column;
         flex: 1;
         justify-content: space-between;
+        justify-items: right;
+        min-width: 0;
         button{
             justify-content: center;
             box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
