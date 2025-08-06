@@ -29,7 +29,7 @@ function Navigation({activeWindow, setActiveWindow}) {
                 <img src={avatar} alt=""/>
                 <div>
                     <h2>{user?.name || 'User'}</h2>
-                    <p>Your Money</p>
+                    {/* <p>Your Money</p> */}
                 </div>
             </div>
             <ul className='menu-items'>

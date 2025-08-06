@@ -13,22 +13,22 @@ export const menuItems = [
         icon: expenses,
         link: '/expenses'
     },
-    {
-        id: 3,
-        title: 'Income',
-        icon: income,
-        link: '/income'
-    },
+    // {
+    //     id: 3,
+    //     title: 'Income',
+    //     icon: income,
+    //     link: '/income'
+    // },
     {
         id: 4,
         title: 'Budget by Category',
         icon: categories,
         link: '/budget-by-category'
     },
-    {
-        id: 5,
-        title: 'Budget by Month',
-        icon: dollar,
-        link: '/budget-by-month'
-    }
+    // {
+    //     id: 5,
+    //     title: 'Budget by Month',
+    //     icon: dollar,
+    //     link: '/budget-by-month'
+    // }
 ]
