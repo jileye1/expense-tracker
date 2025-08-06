@@ -3,7 +3,7 @@ import styled from "styled-components";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import CreatableSelect from 'react-select/creatable';
-import { postExpense, postExpenseWithNewCategory, updateExpense } from "../../api/expenses";
+import { postExpense, updateExpense } from "../../api/expenses";
 import { getCategories } from "../../api/categories";
 import StyledButton from "../button/styledButton";
 import { close } from "../../utils/icons";
@@ -129,18 +129,10 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                 response = await updateExpense(expense.id, formData);
                 console.log('Expense updated:', response.data);
             } else {
-                // for new expenses, check is category exists
-                if(isNewCategory(category)) {
-                    // use endpoint with create new
-                    response = await postExpenseWithNewCategory(formData);
-                    console.log(response);
-                    console.log('Expense created with new category:', response.data);
-                } else {
-                    // use regular endpoint
-                    response = await postExpense(formData);
-                    console.log(response);
-                    console.log('Expense created:', response.data);
-                }
+                // use regular endpoint
+                response = await postExpense(formData);
+                console.log(response);
+                console.log('Expense created:', response.data);
             }
 
             setUpdateList(!updateList); // Trigger re-fetch of expenses
