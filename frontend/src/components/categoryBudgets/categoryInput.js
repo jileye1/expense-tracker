@@ -17,9 +17,14 @@ function CategoryInput({updateList, setUpdateList, setCreateCategoryEnabled}) {
     const { name, budget_per_year, budget_per_month, budget_per_week } = newCategory;
 
     const handleInput = name => e => {
-        setNewCategory({...newCategory, [name]: e.target.value});
-        if(newCategory.name && (newCategory.budget_per_year || newCategory.budget_per_month || newCategory.budget_per_week)) {
+
+        const updatedCategory = {...newCategory, [name]: e.target.value};
+        setNewCategory(updatedCategory);
+
+        if(updatedCategory.name && (updatedCategory.budget_per_year || updatedCategory.budget_per_month || updatedCategory.budget_per_week)) {
             setEnableSave("visible");
+        } else {
+            setEnableSave("hidden");
         }
     }
 
@@ -43,7 +48,7 @@ function CategoryInput({updateList, setUpdateList, setCreateCategoryEnabled}) {
                 />
             </div>
             <div className="inner-content">
-                <input className="budget"
+                <input className="budget" 
                     type='text'
                     value={budget_per_year}
                     name={'budget_per_year'}
@@ -78,7 +83,7 @@ function CategoryInput({updateList, setUpdateList, setCreateCategoryEnabled}) {
                 />
                 <StyledButton
                     name={'Cancel'}
-                    bPadding={'.1rem .1rem'}
+                    bPadding={'.2rem .5rem'}
                     bRadius={'20px'}
                     bg={'var(--color-grey'}
                     color={'#fff'}
@@ -96,28 +101,17 @@ const CategoryInputStyled = styled.div`
     box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
     border-radius: 1px;
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 1rem;
     width: 100%;
     color: #222260;
     align-content: space-between;
+    height: 50px;
 
     input{
-        font-family: inherit;
-        font-size: inherit;
-        outline: none;
-        border: none;
-        padding: .5rem 1rem;
-        border-radius: 5px;
-        border: 2px solid #fff;
-        background: transparent;
-        box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-        color: rgba(34, 34, 96, 0.9);
-        &::placeholder{
-            color: rgba(34, 34, 96, 0.4);
-        }
+        resize: horizontal;
     }
 
     .name-con{
@@ -145,7 +139,7 @@ const CategoryInputStyled = styled.div`
         gap: 0.4rem;
         display: flex;
         padding-left: 1rem;
-        padding-right: 1rem;
+        padding-right: 2rem;
         flex-direction: column;
         flex: 1;
         justify-content: space-between;
