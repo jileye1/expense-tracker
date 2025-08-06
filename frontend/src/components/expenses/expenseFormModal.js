@@ -31,15 +31,21 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
     useEffect(() => {
         if (isOpen) {
             if (isEditMode && expense) {
+                console.log("set form data on edit mode");
+                console.log(expense);
                 setFormData({
                     title: expense.title || '',
                     amount: expense.amount || '',
                     date: new Date(expense.date) || '',
-                    category: expense.category.name || '',
+                    category: expense.category || '',
                     description: expense.description || '',
                 });
                 if(expense.category) {
-                    setSelectedCategory({ value: expense.category.name, label: expense.category.name });
+                    console.log('expense category');
+                    console.log(expense.category);
+                    setSelectedCategory({ value: expense.category, label: expense.category });
+                    console.log('selected category');
+                    console.log(selectedCategory);
                 }
             } else {
                 setFormData({
@@ -69,7 +75,11 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                         value: cat.name,
                         label: cat.name
                     }));
+                    console.log('options');
+                    console.log(options);
                     setSelectCategoryOptions(options);
+                    console.log('selected category options');
+                    console.log(selectCategoryOptions);
                 })
                 .catch(error => {
                     console.error('Error fetching categories:', error);
@@ -112,6 +122,10 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
     };
 
     const isNewCategory = (categoryName) => {
+        console.log('category name');
+        console.log(categoryName);
+        console.log('select option');
+        console.log(selectCategoryOptions);
         return !selectCategoryOptions.some(option =>
             option.value.toLowerCase() == categoryName.toLowerCase()
         );
