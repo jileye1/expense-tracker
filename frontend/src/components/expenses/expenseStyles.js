@@ -70,6 +70,7 @@ export const ExpensesStyled = styled.div`
                 border: 2px dashed rgba(34, 34, 96, 0.2);
                 border-radius: 12px;
                 margin: 2rem 0;
+            }
         }
     }
 
@@ -214,7 +215,7 @@ export const ExpenseListItemStyled = styled.div`
         justify-content: flex-end;
 
         button{
-            trasnition: all 0.2s ease;
+            transition: all 0.2s ease;
 
             &:hover{
                 background: rgba(244, 67, 54, 0.15) !important;

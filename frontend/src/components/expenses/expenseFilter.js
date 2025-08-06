@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import StyledButton from "../button/styledButton";
 import { getCategories } from "../../api/categories";
 import { getMonthOptions, getYearOptions } from "../../utils/filterUtils.js";
 

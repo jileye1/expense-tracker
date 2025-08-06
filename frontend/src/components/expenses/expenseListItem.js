@@ -1,9 +1,8 @@
 import React from "react";
-import { dollar, calendar, comment, trash } from "./../../utils/icons";
+import { trash } from "./../../utils/icons";
 import StyledButton from "../button/styledButton";
 import { ExpenseListItemStyled } from "./expenseStyles";
 import { deleteExpense } from "./../../api/expenses";
-import { dateFormat } from "../../utils/dateFormat";
 
 function ExpenseListItem({
     id,

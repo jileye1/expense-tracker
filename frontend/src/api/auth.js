@@ -8,6 +8,7 @@ export const loginUser = async (email, password) => {
         });
         return { success: true, data: response.data };
     } catch (error) {
+        console.log(error.response.data);
         return { 
             success: false, 
             error: error.response?.data?.message || 'Login failed' 
@@ -24,6 +25,7 @@ export const registerUser = async (name, email, password) => {
         });
         return { success: true, data: response.data };
     } catch (error) {
+        console.log(error.response.data);
         return { 
             success: false, 
             error: error.response?.data?.message || 'Registration failed' 
