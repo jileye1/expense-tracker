@@ -38,12 +38,12 @@ function Categories() {
                     <div className="income-con">% Income</div>
                 </div>
                 <div className="budget-content">
+                    <Headings />
                     <Totals
                         total_per_year={getTotalFor("budget_per_year")}
                         total_per_month={getTotalFor("budget_per_month")}
                         total_per_week={getTotalFor("budget_per_week")}
                     />
-                    <Headings />
                     <div className="budget-table">
                         {categories.map((category) => {
                             const { _id, name, budget_per_year, budget_per_month, budget_per_week } = category;

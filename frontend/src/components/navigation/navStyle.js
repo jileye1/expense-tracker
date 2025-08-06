@@ -62,10 +62,7 @@ z-index: 100; // Ensure nav is above main content
         height: 80px;
         border-radius: 50%;
         object-fit: cover;
-        background: #fcf6f9;
-        border: 2px solid #FFFFFF;
-        padding: .2rem;
-        box-shadow: 0px 1px 17px rgba(0, 0, 0, 0.06);
+        box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.2);
 
         @media screen and (max-width: 1200px) {
             width: 60px;

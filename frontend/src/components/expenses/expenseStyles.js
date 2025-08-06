@@ -19,8 +19,8 @@ export const ExpensesStyled = styled.div`
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 1.5rem 0 1rem 0;
-            padding-bottom: 0.5rem;
+            margin: 0.5rem 0 1rem 0;
+            padding: 0.5rem 0.8rem;
             border-bottom: 2px solid rgba(255, 255, 255, 0.3);
             
             @media screen and (max-width: 768px) {

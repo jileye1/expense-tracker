@@ -83,11 +83,10 @@ function ExpenseFilter({ onFilterChange, expenses }) {
 const ExpenseFilterStyled = styled.div`
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1.5rem;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(34, 34, 96, 0.08);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
+
+    padding: 1rem 0.1rem;
     margin-bottom: 1.5rem;
     backdrop-filter: blur(4px);
 

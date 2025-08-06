@@ -39,9 +39,9 @@ export const CategoryIndexStyled = styled.div`
 
 export const CategoryItemStyled = styled.div`
     background: #FCF6F9;
-    border: 2px solid #FFFFFF;
+    border: 1px solid #FFFFFF;
     box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-    border-radius: 1px;
+    border-radius: 8px;
     padding: 1rem;
     margin-bottom: 0.5rem;
     display: flex;
@@ -82,12 +82,11 @@ export const CategoryItemStyled = styled.div`
 
 export const HeadingsStyled = styled.div`
     padding: 1rem;
-    margin-bottom: 1rem;
+    padding-bottom: 0.2rem;
     display: flex;
     align-items: center;
     gap: 1rem;
     width: 100%;
-    align-content: space-between;
     font-weight: bold;
     .name-con{
         gap: 0.5rem;
@@ -118,12 +117,12 @@ export const HeadingsStyled = styled.div`
 `;
 
 export const TotalsStyled = styled.div`
-    background: #ecd4fa;
-    border: 2px solid #FFFFFF;
-    box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-    border-radius: 20px;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    background: #ecd4fa91;
+    border: 1px solid #FFFFFF;
+
+    border-radius: 8px;
+    padding: 0.8rem 1rem 0.8rem 1rem;
+    margin-bottom: 0.6rem;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -138,6 +137,7 @@ export const TotalsStyled = styled.div`
         flex: 4;
     }
     .inner-content{
+        /* background: #ecd4fa; */
         display: flex;
         flex: 12;
         font-size: 1.0rem;
