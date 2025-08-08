@@ -4,16 +4,12 @@ export const ExpensesStyled = styled.div`
     display: flex;
     overflow: auto;
     height: 100%;
+    margin: 0 auto; // center the content
+    max-width: 900px; //limit width for readability
 
 
     .expense-content{
         width: 100%;
-
-        .expenses-list{
-            width: 100%;
-            max-width: 800px; //limit width for readability
-            margin: 0 auto; // center the content
-        }
 
         .list-header-container{
             display: flex;
