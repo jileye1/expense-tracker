@@ -5,7 +5,7 @@ import Navigation from "./components/navigation/navigation";
 import { useState } from "react";
 import Dashboard from "./components/dashboard";
 import Expenses from "./components/expenses/expenseIndex";
-import Income from "./components/incomes/incomeIndex";
+// import Income from "./components/incomes/incomeIndex";
 import Categories from "./components/categoryBudgets/categoryBudgetIndex";
 import Budget from "./components/budget";
 import { useAuthContext } from "./contexts/AuthContext";
@@ -20,17 +20,13 @@ function App() {
   const displayActiveWindow = () => {
     switch (activeWindow) {
       case 1:
-        return <Dashboard />
-      case 2:
         return <Expenses />
-      case 3:
-        return <Income />
-      case 4:
+      case 2:
         return <Categories />
-      case 5:
-        return <Budget />
-      default:
+      case 3:
         return <Dashboard />
+      default:
+        return <Expenses />
     }
   }
 
@@ -111,3 +107,21 @@ const AppStyled = styled.div`
 `;
 
 export default App;
+
+
+
+
+    // switch (activeWindow) {
+    //   case 1:
+    //     return <Dashboard />
+    //   case 2:
+    //     return <Expenses />
+    //   case 3:
+    //     return <Income />
+    //   case 4:
+    //     return <Categories />
+    //   case 5:
+    //     return <Budget />
+    //   default:
+    //     return <Dashboard />
+    // }
