@@ -1,0 +1,77 @@
+3. CATEGORIES Endpoints
+
+[POST] BASE_URL/api/v1/categories
+
+Example request bodies:
+
+a. With budget per year
+{
+    "name": "category name",
+    "budget_per_year": 36525
+}
+
+b. With budget per month
+{
+    "name": "category name",
+    "budget_per_month": 3043.75
+}
+
+c. With budget per week
+{
+    "name": "category name",
+    "budget_per_week": 700
+}
+
+Success response (status = 200):
+{
+    "_id": "category id",
+    "user": "user id",
+    "name": "category name",
+    "budget_per_year": 36525,
+    "budget_per_month": 3043.75,
+    "budget_per_week": 700
+}
+
+Error responses:
+Status: 400 - Message: Name required.
+Status: 400 - Message: One positive budget field required.
+Status: 400 - Message: Category name already exists. Please use a different name.
+Status: 500 - Message: {error.message}
+
+
+[GET] BASE_URL/api/v1/categories
+Gets categories for current user extracted from auth token
+
+Success response (status = 200):
+[
+    {
+        "_id": "category id",
+        "user": "user id",
+        "name": "category name",
+        "budget_per_year": 36525,
+        "budget_per_month": 3043.75,
+        "budget_per_week": 700
+    }
+]
+
+Error responses:
+Status: 500 - Message: {error.message}
+
+[DELETE] BASE_URL/api/v1/categories/:id
+Returns deleted expense if successful
+
+Success response (status = 200):
+{
+    "_id": "category id",
+    "user": "user id",
+    "name": "category name",
+    "budget_per_year": 36525,
+    "budget_per_month": 3043.75,
+    "budget_per_week": 700
+}
+
+Error responses:
+Status: 400 - Message: Cannot delete category. It is being used by one or more expenses.
+Status: 403 - Message: Not authorized
+Status: 404 - Message: Category not found
+Status: 500 - Message: {error.message}

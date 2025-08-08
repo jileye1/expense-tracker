@@ -1,0 +1,62 @@
+1. AUTH Endpoints
+
+[POST] BASE_URL/api/v1/auth/register
+
+Example request body:
+{
+    "name": "string",
+    "email": "email",
+    "password": "minimum 8 character password"
+}
+
+Success response (status = 201):
+{
+    "_id": "user id",
+    "name": "string",
+    "email": "email",
+    "token": "jwt token"
+}
+
+Error responses:
+Status: 400 - Message: All fields required
+Status: 400 - Message: Password must be at least 8 characters
+Status: 400 - Message: Email has already been registered
+Status: 400 - Message: Invalid user data
+Status: 500 - Message: {error.message}
+
+[POST] BASE_URL/api/v1/auth/login
+
+Example request body:
+{
+    "email": "email",
+    "password": "password"
+}
+
+Success response (status = 201):
+{
+    "_id": "user id",
+    "name": "string",
+    "email": "email",
+    "token": "jwt token"
+}
+
+Error responses:
+Status: 400 - Message: Email and password are required
+Status: 404 - Message: Account with this email does not exist
+Status: 401 - Message: Invalid email or password
+Status: 500 - Message: {error.message}
+
+[GET] BASE_URL/api/v1/auth/profile
+Gets profile for current user extracted from auth token
+
+Example response:
+{
+    "_id": "user id",
+    "name": "string",
+    "email": "email"
+}
+
+Error responses:
+Status: 401 - Message: User not found
+Status: 401 - Message: Authorisation failed
+Status: 500 - Message: {error.message}
