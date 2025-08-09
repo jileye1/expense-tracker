@@ -4,9 +4,10 @@ export const CategoryIndexStyled = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    height: 100vh;
-    margin: 0;
+    height: 100%;
+    margin: 0 auto;
     padding: 0;
+    max-width: 900px;
     .stats-content{
         justify-content: flex-end;
         display: flex;

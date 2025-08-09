@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import CreatableSelect from 'react-select/creatable';
 import { postExpense, updateExpense } from "../../api/expenses";
 import { getCategories } from "../../api/categories";
+import useApiError from '../../hooks/useApiError';
 import StyledButton from "../button/styledButton";
 import { close } from "../../utils/icons";
 
@@ -24,6 +25,7 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [loadingCategories, setLoadingCategories] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { handleError, handleErrorWithAlert } = useApiError();
 
     const { title, amount, date, category, description } = formData;
 
@@ -64,8 +66,28 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
     useEffect(() => {
         if (isOpen) {
             setLoadingCategories(true);
+
+            // const fetchCategories = async () => {
+            //     try {
+            //         const response = await getCategories();
+
+            //         if (!response.success) {
+            //             handleError(response.error, () = {
+            //                 setCategories([]); 
+            //                 setSelectCategoryOptions([]); 
+            //             });
+            //             return;
+            //         }
+            //     }
+            // }
             getCategories()
                 .then(response => {
+                    if (!response.success) {
+                        console.error('Error fetching categories:', response.error);
+                        setCategories([]); // Set empty array as fallback
+                        setSelectCategoryOptions([]); 
+                        return;
+                    }
                     console.log('Categories fetched:', response.data);
                     const responseCategories = response.data || [];
                     setCategories(responseCategories);  
@@ -136,19 +158,20 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
         setIsSubmitting(true);
 
         try {
-            let response;
+            const response = isEditMode
+                ? await updateExpense(expense.id, formData)
+                : await postExpense(formData);
 
-            if (isEditMode) {
-                // Update existing expense
-                response = await updateExpense(expense.id, formData);
-                console.log('Expense updated:', response.data);
-            } else {
-                // use regular endpoint
-                response = await postExpense(formData);
-                console.log(response);
-                console.log('Expense created:', response.data);
+            if(!response.success) {
+                handleErrorWithAlert(
+                    response.error, 
+                    `Error ${isEditMode ? 'updating' : 'creating'} expense - ` + response.error
+                );
+                return;
             }
 
+            console.log(response);
+            console.log(`Expense ${isEditMode ? 'updated' : 'created'}:`, response.data);
             setUpdateList(!updateList); // Trigger re-fetch of expenses
             onClose(); // Close modal after submission
 
@@ -164,8 +187,9 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                 setSelectedCategory(null);
             }
         } catch (error) {
-            console.error(`Error ${isEditMode ? 'updating' : 'creating'} expense`, error);
-            alert('Failed to save expense. Please try again.');
+            handleErrorWithAlert(error,
+                'Failed to save expense. Please try again.'
+             );
         } finally {
             setIsSubmitting(false);
         }
@@ -248,7 +272,7 @@ function ExpenseFormModal({ isOpen, onClose, expense = null, updateList, setUpda
                         <textarea 
                             name="description"
                             value={description}
-                            placeholder="Add a description (optional)"
+                            placeholder="Add a description"
                             id="description"
                             cols="30"
                             rows="3"

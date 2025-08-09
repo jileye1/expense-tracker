@@ -1,0 +1,103 @@
+2. EXPENSES Endpoints
+
+[POST] BASE_URL/api/v1/expenses
+
+Example request bodies:
+
+a. Existing category name
+{
+    "title": "expense title",
+    "amount": 50,
+    "category": "existing category name",
+    "description": "description",
+    "date": "Date"
+}
+
+b. Existing category id
+{
+    "title": "expense title",
+    "amount": 50,
+    "category": "existing category ID",
+    "description": "description",
+    "date": "Date"
+}
+
+c. New category name
+{
+    "title": "expense title",
+    "amount": 50,
+    "category": "new category name",
+    "description": "description",
+    "date": "Date"
+}
+
+Success response (status = 200):
+{
+    "_id": "expense id",
+    "user": "user id",
+    "title": "expense title",
+    "amount": 50,
+    "category": {
+        "_id": "category id",
+        "name": "category name"
+    },
+    "description": "description",
+    "date": "Date"
+}
+
+Error responses:
+Status: 400 - Message: Title required.
+Status: 400 - Message: Amount required.
+Status: 400 - Message: Date required.
+Status: 400 - Message: Category required.
+Status: 400 - Message: Description required.
+Status: 400 - Message: All fields required.
+Status: 400 - Message: Amount must be a positive number.
+Status: 400 - Message: Category must be a non-empty string.
+Status: 400 - Message: Invalid category. Category must exist and belong to the user.
+Status: 500 - Message: {error.message}
+
+
+[GET] BASE_URL/api/v1/expenses
+Gets expenses for current user extracted from auth token
+
+Success response (status = 200):
+[
+    {
+        "_id": "expense id",
+        "user": "user id",
+        "title": "expense title",
+        "amount": 50,
+        "category": {
+            "_id": "category id",
+            "name": "category name"
+        },
+        "description": "description",
+        "date": "Date"
+    }
+]
+
+Error responses:
+Status: 500 - Message: {error.message}
+
+[DELETE] BASE_URL/api/v1/expenses/:id
+Returns deleted expense if successful
+
+Success response (status = 200):
+{
+    "_id": "expense id",
+    "user": "user id",
+    "title": "expense title",
+    "amount": 50,
+    "category": {
+        "_id": "category id",
+        "name": "category name"
+    },
+    "description": "description",
+    "date": "Date"
+}
+
+Error responses:
+Status: 403 - Message: Not authorized
+Status: 404 - Message: Expense not found
+Status: 500 - Message: {error.message}

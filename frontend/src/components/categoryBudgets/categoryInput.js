@@ -30,8 +30,13 @@ function CategoryInput({updateList, setUpdateList, setCreateCategoryEnabled}) {
 
     const handleSave = () => {
         postCategory(newCategory).then((response) => {
-            console.log(response.data);
-            setUpdateList(!updateList);
+            if(!response.success) {
+                console.error("Error creating category", response.error);
+                alert("Error creating category: " + response.error);
+            } else {
+                console.log(response.data);
+                setUpdateList(!updateList);
+            }
         });
         setCreateCategoryEnabled(false);
     }
