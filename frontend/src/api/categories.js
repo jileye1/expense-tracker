@@ -1,22 +1,32 @@
 import axiosInstance from ".";
 
 export const getCategories = async () => {
-    return axiosInstance
-        .get("/categories")
-        .then((res) => res)
-        .catch((err) => err.response);
+    try {
+        const response = await axiosInstance.get('/categories');
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.error("API Error: ", error.response.data || error.message);
+        return { 
+            success: false, 
+            error: error.response?.data?.message || 'Error fetching categories' ,
+            status: error.response.status
+        };
+    }
 };
 
-export const getCategoriesForUser = async () => {
-
-};
 
 export const postCategory = async (category) => {
-    return axiosInstance
-        .post("/categories", category)
-        .then((res) => res)
-        .catch((err) => err.response.data.message);
-
+    try {
+        const response = await axiosInstance.post('/categories', category);
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.error("API Error: ", error.response.data || error.message);
+        return { 
+            success: false, 
+            error: error.response?.data?.message || 'Error creating category' ,
+            status: error.response.status
+        };
+    }
 };
 
 export const updateCategory = async () => {
@@ -24,8 +34,15 @@ export const updateCategory = async () => {
 };
 
 export const deleteCategory = async (id) => {
-    return axiosInstance
-        .delete("/categories/" + id)
-        .then((res) => res)
-        .catch((err) => err.response.data.message);
+    try {
+        const response = await axiosInstance.delete('/categories/' + id);
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.error("API Error: ", error.response.data || error.message);
+        return { 
+            success: false, 
+            error: error.response?.data?.message || 'Error deleting category' ,
+            status: error.response.status
+        };
+    }
 };

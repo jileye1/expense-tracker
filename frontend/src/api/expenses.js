@@ -1,21 +1,32 @@
 import axiosInstance from ".";
 
 export const getExpenses = async () => {
-    return axiosInstance
-        .get("/expenses")
-        .then((res) => res)
-        .catch((err) => err.response);
+    try {
+        const response = await axiosInstance.get('/expenses');
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.error("API Error: ", error.response.data || error.message);
+        return { 
+            success: false, 
+            error: error.response?.data?.message || 'Error fetching expenses' ,
+            status: error.response.status
+        };
+    }
 };
 
-export const getExpensesForUser = async () => {
-
-};
 
 export const postExpense = async (expense) => {
-    return axiosInstance
-        .post("/expenses", expense)
-        .then((res) => res)
-        .catch((err) => err.response.data.message);
+    try {
+        const response = await axiosInstance.post('/expenses', expense);
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.error("API Error: ", error.response.data || error.message);
+        return { 
+            success: false, 
+            error: error.response?.data?.message || 'Error creating expense' ,
+            status: error.response.status
+        };
+    }
 };
 
 export const updateExpense = async () => {
@@ -23,8 +34,15 @@ export const updateExpense = async () => {
 };
 
 export const deleteExpense = async (id) => {
-    return axiosInstance
-        .delete("/expenses/" + id)
-        .then((res) => res)
-        .catch((err) => err.response.data.message);
+    try {
+        const response = await axiosInstance.delete('/expenses/' + id);
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.error("API Error: ", error.response.data || error.message);
+        return { 
+            success: false, 
+            error: error.response?.data?.message || 'Error deleting expense' ,
+            status: error.response.status
+        };
+    }
 };
